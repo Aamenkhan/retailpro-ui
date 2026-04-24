@@ -407,6 +407,7 @@ function ProductsPage({products,setProducts,notify}){
   const [loadMsg,setLoadMsg]=useState("");
   const [preview,setPreview]=useState([]);
   const [editIdx,setEditIdx]=useState(null);
+  const [editingProduct,setEditingProduct]=useState(null);
   const [imgPrev,setImgPrev]=useState(null);
   const [sheetsUrl,setSheetsUrl]=useState("");
   const [csvText,setCsvText]=useState("");
@@ -419,6 +420,22 @@ function ProductsPage({products,setProducts,notify}){
     setProducts(newProds);DB.set("products",newProds);
     notify(`✓ ${valid.length} product(s) added!`,"success");
     setPreview([]);setMethod(null);setImgPrev(null);
+  };
+
+  const deleteProduct=(product)=>{
+    if(!window.confirm(`Kya aap '${product.name}' delete karna chahte hain?`))return;
+    const updatedProducts=products.filter(p=>p.id!==product.id);
+    setProducts(updatedProducts);
+    DB.set("products",updatedProducts);
+    notify("Product deleted!","success");
+  };
+
+  const saveEditedProduct=(updated)=>{
+    const updatedProducts=products.map(p=>p.id===updated.id?updated:p);
+    setProducts(updatedProducts);
+    DB.set("products",updatedProducts);
+    setEditingProduct(null);
+    notify("Product updated!","success");
   };
 
   const parseAI=async(text,src)=>{
@@ -486,6 +503,11 @@ If purchase bill: costPrice=bill amount, retailPrice=costPrice*1.20, wholesalePr
 
       {!method&&!preview.length&&(
         <>
+          {editingProduct&&(
+            <Modal onClose={()=>setEditingProduct(null)} width={640}>
+              <ProductForm title={`✏️ ${editingProduct.name||"Edit Product"}`} initial={editingProduct} onSave={saveEditedProduct} onCancel={()=>setEditingProduct(null)} suppliers={suppliers}/>
+            </Modal>
+          )}
           <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14,maxWidth:640,marginBottom:24}}>
             {addMethods.map(m=>(
               <div key={m.id} onClick={()=>setMethod(m.id)} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:22,cursor:"pointer",textAlign:"center",transition:"all .15s"}}>
@@ -498,17 +520,21 @@ If purchase bill: costPrice=bill amount, retailPrice=costPrice*1.20, wholesalePr
           {/* Current inventory */}
           <div style={{fontWeight:700,fontSize:14,marginBottom:10}}>Current Inventory ({products.length})</div>
           <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:12,overflow:"hidden"}}>
-            <div style={{display:"grid",gridTemplateColumns:"2.5fr 1fr 1fr 1fr 1fr .8fr",padding:"9px 16px",borderBottom:`1px solid ${C.border}`,color:C.muted,fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:.8}}>
-              <span>Product</span><span>Category</span><span>Retail</span><span>Wholesale</span><span>Cost</span><span>Stock</span>
+            <div style={{display:"grid",gridTemplateColumns:"2.5fr 1fr 1fr 1fr 1fr .8fr 1fr",padding:"9px 16px",borderBottom:`1px solid ${C.border}`,color:C.muted,fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:.8}}>
+              <span>Product</span><span>Category</span><span>Retail</span><span>Wholesale</span><span>Cost</span><span>Stock</span><span>Actions</span>
             </div>
             {products.map((p,i)=>(
-              <div key={p.id||i} style={{display:"grid",gridTemplateColumns:"2.5fr 1fr 1fr 1fr 1fr .8fr",padding:"11px 16px",borderBottom:`1px solid ${C.dim}`,alignItems:"center",fontSize:12}}>
+              <div key={p.id||i} style={{display:"grid",gridTemplateColumns:"2.5fr 1fr 1fr 1fr 1fr .8fr 1fr",padding:"11px 16px",borderBottom:`1px solid ${C.dim}`,alignItems:"center",fontSize:12}}>
                 <span style={{fontWeight:600}}>{p.emoji} {p.name} <span style={{color:C.muted,fontSize:10}}>({p.unit})</span></span>
                 <span style={{color:C.muted}}>{p.category}</span>
                 <span style={{fontWeight:700,color:C.green}}>{fmt(p.retailPrice)}</span>
                 <span style={{fontWeight:700,color:C.blue}}>{fmt(p.wholesalePrice)}</span>
                 <span style={{color:C.muted}}>{fmt(p.costPrice||0)}</span>
                 <span style={{fontWeight:700,color:p.stock===0?C.red:p.stock<=(p.reorderLevel||10)?C.yellow:C.text}}>{p.stock}</span>
+                <span style={{display:"flex",gap:6,justifyContent:"flex-start"}}>
+                  <button onClick={()=>setEditingProduct(p)} style={{padding:"4px 8px",borderRadius:6,border:"1px solid rgba(59,130,246,0.3)",background:"rgba(59,130,246,0.1)",color:C.blue,cursor:"pointer",fontSize:11,fontWeight:700}}>✏️</button>
+                  <button onClick={()=>deleteProduct(p)} style={{padding:"4px 8px",borderRadius:6,border:"1px solid rgba(239,68,68,0.3)",background:"rgba(239,68,68,0.1)",color:"#EF4444",cursor:"pointer",fontSize:11,fontWeight:700}}>🗑️</button>
+                </span>
               </div>
             ))}
           </div>
