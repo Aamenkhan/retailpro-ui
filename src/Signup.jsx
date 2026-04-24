@@ -9,8 +9,24 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    localStorage.setItem("retailpro_signup", JSON.stringify({ ...form, createdAt: Date.now() }));
-    navigate("/book-demo");
+    const unameBase=(form.ownerName||form.businessName||"shop").toLowerCase().replace(/[^a-z0-9]+/g,"").slice(0,10)||"shop";
+    const username=`${unameBase}${(form.phone||Date.now().toString()).slice(-4)}`;
+    const password=(form.phone||"123456").slice(-6)||"123456";
+    const tenantsRaw=localStorage.getItem("rp_tenants");
+    const tenants=tenantsRaw?JSON.parse(tenantsRaw):[];
+    const newTenant={
+      id:username,
+      username,
+      password,
+      businessName:form.businessName,
+      phone:form.phone,
+      plan:"free",
+      createdAt:Date.now(),
+    };
+    localStorage.setItem("rp_tenants",JSON.stringify([...tenants.filter(t=>t.id!==newTenant.id),newTenant]));
+    localStorage.setItem("rp_current_tenant",newTenant.id);
+    localStorage.setItem("retailpro_signup", JSON.stringify({ ...form, username, password, createdAt: Date.now() }));
+    navigate("/app");
   };
 
   return (
