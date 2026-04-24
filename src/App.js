@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 /* ══════════════════════════════════════════════════════════════════
-   RetailPRO SaaS — ULTIMATE COMPLETE EDITION
+   Thtwaat Business Suite — ULTIMATE COMPLETE EDITION
    ✅ Onboarding (Business + Owner setup)
    ✅ POS (Retail + Wholesale, GST bills, Credit)
    ✅ Products (Manual + Excel + Google Sheets + Bill Photo AI)
@@ -218,7 +218,7 @@ function LoginScreen({onLogin}){
   return(
     <div style={{minHeight:"100vh",background:C.bg,color:C.text,fontFamily:"'Space Grotesk',sans-serif",display:"grid",placeItems:"center",padding:16}}>
       <div style={{width:"100%",maxWidth:430,background:C.card,border:`1px solid ${C.border2}`,borderRadius:18,padding:24}}>
-        <div style={{fontSize:28,fontWeight:900,marginBottom:4}}><span style={{color:C.green}}>Retail</span><span style={{color:C.blue}}>PRO</span></div>
+        <div style={{fontSize:28,fontWeight:900,marginBottom:4}}><span style={{color:C.green}}>Thtwaat</span><span style={{color:C.blue}}> POS</span></div>
         <div style={{fontSize:18,fontWeight:800,marginBottom:16}}>Apni Dukan mein Login Karo</div>
         <div style={{marginBottom:11}}><label style={lbl}>Username</label><input value={username} onChange={e=>setUsername(e.target.value)} style={inp()} placeholder="demo"/></div>
         <div style={{marginBottom:12}}><label style={lbl}>Password</label><input type="password" value={password} onChange={e=>setPassword(e.target.value)} style={inp()} placeholder="demo123"/></div>
@@ -258,7 +258,7 @@ function Onboarding({onComplete}){
       <div style={{width:540,maxWidth:"100%"}}>
         <div style={{textAlign:"center",marginBottom:32}}>
           <div style={{fontSize:42,marginBottom:8}}>{biz.logo||"🏪"}</div>
-          <div style={{fontSize:28,fontWeight:900,color:C.text,letterSpacing:"-1px"}}><span style={{color:C.green}}>Retail</span><span style={{color:C.blue}}>PRO</span><span style={{fontSize:12,background:`linear-gradient(135deg,${C.purple},${C.blue})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",fontWeight:800,marginLeft:8}}>SaaS</span></div>
+          <div style={{fontSize:28,fontWeight:900,color:C.text,letterSpacing:"-1px"}}><span style={{color:C.green}}>Thtwaat</span><span style={{color:C.blue}}> POS</span><span style={{fontSize:12,background:`linear-gradient(135deg,${C.purple},${C.blue})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",fontWeight:800,marginLeft:8}}>Business Suite</span></div>
           <div style={{fontSize:12,color:C.muted,marginTop:4}}>Complete Business ERP — Setup karo, shuru karo</div>
         </div>
         {/* Step dots */}
@@ -324,7 +324,7 @@ function Onboarding({onComplete}){
           <div style={{display:"flex",gap:10,marginTop:20}}>
             {step>0&&<button onClick={()=>setStep(p=>p-1)} style={{padding:"11px 20px",borderRadius:10,border:`1px solid ${C.border2}`,background:"transparent",color:C.muted,cursor:"pointer",fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,fontSize:13}}>← Back</button>}
             <button onClick={()=>{if(step<steps.length-1)setStep(p=>p+1);else finish();}} style={{...btn(C.green),flex:1}}>
-              {step<steps.length-1?"Next →":"🚀 Launch RetailPRO"}
+              {step<steps.length-1?"Next →":"🚀 Launch Thtwaat POS"}
             </button>
           </div>
         </div>
@@ -684,7 +684,7 @@ function QRPage({products,setProducts,notify}){
     <img src="${QR_URL(QR_DAT(p),180)}" width="180" height="180"/>
     <div class="prices"><div class="pb"><div style="font-size:9px;color:#888">RETAIL</div><div class="r">₹${p.retailPrice}</div></div><div class="pb"><div style="font-size:9px;color:#888">WHOLESALE</div><div class="w">₹${p.wholesalePrice}</div></div></div>
     ${p.hsn?`<div style="font-size:10px;color:#bbb">HSN: ${p.hsn} · GST: ${p.gstRate}%</div>`:""}
-    <div style="font-size:9px;color:#ccc;margin-top:8px">RetailPRO · Scan to check price</div>
+    <div style="font-size:9px;color:#ccc;margin-top:8px">Thtwaat POS · Scan to check price</div>
     <script>window.onload=()=>{window.print();window.close();}<\/script></body></html>`);
     w.document.close();
   };
@@ -852,7 +852,7 @@ function POSPage({products,setProducts,orders,setOrders,notify,mode,setMode}){
       return`<tr><td>${item.emoji} ${item.name} (${item.unit})</td><td>${item.hsn||"—"}</td><td>${item.qty}</td><td>₹${rate.toLocaleString("en-IN")}</td><td>₹${taxable.toLocaleString("en-IN")}</td><td>${gstR}%</td><td>₹${cgst}</td><td>₹${cgst}</td><td>₹${(taxable+parseFloat(cgst)*2).toFixed(2)}</td></tr>`;
     }).join("");
     w.document.write(`<!DOCTYPE html><html><head><title>GST Bill - ${order.id}</title><style>body{font-family:Arial;padding:24px;font-size:12px;color:#333;}h1{text-align:center;color:#00a876;font-size:20px;}h2{color:#1a6eb8;border-bottom:2px solid #eee;padding-bottom:4px;margin-top:18px;}.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;border-bottom:3px solid #00a876;padding-bottom:12px;}.bname{font-size:20px;font-weight:900;}.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:bold;background:${isWS?"#dbeafe":"#dcfce7"};color:${isWS?"#1d4ed8":"#16a34a"};}.info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}.ibox{border:1px solid #eee;border-radius:6px;padding:9px;}.il{font-size:9px;color:#888;text-transform:uppercase;}.iv{font-size:13px;font-weight:600;}table{width:100%;border-collapse:collapse;margin-bottom:12px;}th{background:#f5f5f5;padding:7px;text-align:left;border:1px solid #ddd;font-size:10px;}td{padding:7px;border:1px solid #eee;}.totbox{background:#f9f9f9;border:2px solid #00a876;border-radius:8px;padding:13px;max-width:300px;margin-left:auto;}.tr{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px;}.gt{display:flex;justify-content:space-between;font-size:18px;font-weight:900;color:#00a876;border-top:2px solid #00a876;padding-top:7px;margin-top:7px;}.footer{text-align:center;color:#aaa;font-size:10px;margin-top:18px;border-top:1px solid #eee;padding-top:9px;}@media print{body{padding:10px;}}</style></head><body>
-    <div class="hdr"><div><div class="bname">🏪 ${business.name||"RetailPRO"}</div><div style="font-size:11px;color:#666;margin-top:3px">${business.address||""}</div><div style="font-size:11px;color:#666">GSTIN: ${business.gstin||"N/A"} | Ph: ${business.phone||""}</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:bold;color:${isWS?"#1d4ed8":"#00a876"}">TAX INVOICE</div><div style="margin-top:5px"><span class="badge">${isWS?"🏭 WHOLESALE":"🛒 RETAIL"}</span></div><div style="margin-top:7px;font-size:11px;color:#666">Bill No: <b>${order.id}</b></div><div style="font-size:11px;color:#666">Date: <b>${order.time}</b></div></div></div>
+    <div class="hdr"><div><div class="bname">🏪 ${business.name||"Thtwaat POS"}</div><div style="font-size:11px;color:#666;margin-top:3px">${business.address||""}</div><div style="font-size:11px;color:#666">GSTIN: ${business.gstin||"N/A"} | Ph: ${business.phone||""}</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:bold;color:${isWS?"#1d4ed8":"#00a876"}">TAX INVOICE</div><div style="margin-top:5px"><span class="badge">${isWS?"🏭 WHOLESALE":"🛒 RETAIL"}</span></div><div style="margin-top:7px;font-size:11px;color:#666">Bill No: <b>${order.id}</b></div><div style="font-size:11px;color:#666">Date: <b>${order.time}</b></div></div></div>
     <div class="info"><div class="ibox"><div class="il">Bill To</div><div class="iv">${order.customer}</div>${order.phone?`<div style="font-size:11px;color:#666">Ph: ${order.phone}</div>`:""}</div><div class="ibox"><div class="il">Payment</div><div class="iv">${order.payment}</div></div></div>
     <table><thead><tr><th>Product</th><th>HSN</th><th>Qty</th><th>Rate</th><th>Taxable</th><th>GST%</th><th>CGST</th><th>SGST</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>
     <div class="totbox">
@@ -862,7 +862,7 @@ function POSPage({products,setProducts,orders,setOrders,notify,mode,setMode}){
       <div class="tr"><span>SGST</span><span>₹${(order.gst_amount/2).toFixed(2)}</span></div>
       <div class="gt"><span>GRAND TOTAL</span><span>₹${order.total.toLocaleString("en-IN")}</span></div>
     </div>
-    <div class="footer"><p>${business.name||"RetailPRO"} · ${business.city||"Bhopal"} · GSTIN: ${business.gstin||"N/A"}</p><p>Computer generated invoice</p></div>
+    <div class="footer"><p>${business.name||"Thtwaat POS"} · ${business.city||"Bhopal"} · GSTIN: ${business.gstin||"N/A"}</p><p>Computer generated invoice</p></div>
     <script>window.onload=()=>{window.print();}<\/script></body></html>`);
     w.document.close();
   };
@@ -872,7 +872,7 @@ function POSPage({products,setProducts,orders,setOrders,notify,mode,setMode}){
       {receipt&&(
         <Modal onClose={()=>setReceipt(null)} width={380}>
           <div style={{padding:22,fontFamily:"monospace",textAlign:"center"}}>
-            <div style={{fontSize:18,fontWeight:900,marginBottom:3}}>{business.logo||"🏪"} {business.name||"RetailPRO"}</div>
+            <div style={{fontSize:18,fontWeight:900,marginBottom:3}}>{business.logo||"🏪"} {business.name||"Thtwaat POS"}</div>
             <div style={{fontSize:10,color:C.muted,marginBottom:10}}>{business.city||"Bhopal"} · GSTIN: {business.gstin||"N/A"}</div>
             <div style={{display:"inline-block",padding:"2px 12px",borderRadius:20,background:mode==="wholesale"?"rgba(59,130,246,.15)":"rgba(0,229,160,.12)",color:mode==="wholesale"?C.blue:C.green,fontSize:11,fontWeight:700,marginBottom:12}}>{mode==="wholesale"?"🏭 WHOLESALE":"🛒 RETAIL"}</div>
             <div style={{borderTop:`1px dashed ${C.border2}`,paddingTop:10,marginBottom:8,fontSize:11,color:C.muted,display:"flex",justifyContent:"space-between"}}><span>{receipt.id}</span><span>{receipt.time}</span></div>
@@ -1611,7 +1611,7 @@ function AnalyticsPage({orders,products}){
     const biz=DB.get("business",{});
     const w=window.open("","_blank","width=900,height=720");
     w.document.write(`<!DOCTYPE html><html><head><title>Report</title><style>body{font-family:Arial;padding:22px;color:#333;}h1{text-align:center;color:#00a876;}h2{color:#1a6eb8;border-bottom:2px solid #eee;padding-bottom:4px;margin-top:18px;}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:11px 0;}.card{border:1px solid #eee;border-radius:8px;padding:10px;text-align:center;}.cv{font-size:18px;font-weight:bold;color:#00a876;}.cl{font-size:10px;color:#888;}table{width:100%;border-collapse:collapse;margin:7px 0;}th{background:#f5f5f5;padding:6px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px;border:1px solid #eee;font-size:11px;}</style></head><body>
-    <h1>🏪 ${biz.name||"RetailPRO"} — ${period.charAt(0).toUpperCase()+period.slice(1)} Report</h1>
+    <h1>🏪 ${biz.name||"Thtwaat POS"} — ${period.charAt(0).toUpperCase()+period.slice(1)} Report</h1>
     <p style="text-align:center;color:#888">${dateFilter} · ${new Date().toLocaleString("en-IN")}</p>
     <div class="grid"><div class="card"><div class="cv">${fmt(rev)}</div><div class="cl">Revenue</div></div><div class="card"><div class="cv">${filtered.length}</div><div class="cl">Orders</div></div><div class="card"><div class="cv">${items}</div><div class="cl">Items Sold</div></div><div class="card"><div class="cv">${fmt(avg)}</div><div class="cl">Avg Order</div></div></div>
     <h2>Split</h2><table><tr><th>Type</th><th>Revenue</th><th>Orders</th></tr><tr><td>🛒 Retail</td><td>${fmt(rtRev)}</td><td>${filtered.filter(o=>o.mode==="retail").length}</td></tr><tr><td>🏭 Wholesale</td><td>${fmt(wsRev)}</td><td>${filtered.filter(o=>o.mode==="wholesale").length}</td></tr><tr><td>GST</td><td>${fmt(gst)}</td><td>—</td></tr><tr><td>Discount</td><td>${fmt(disc)}</td><td>—</td></tr></table>
@@ -1778,7 +1778,7 @@ function InventoryPage({products,setProducts,notify}){
 // ══════════════════════════════════════════════════════════════════
 // MAIN APP
 // ══════════════════════════════════════════════════════════════════
-export default function RetailPROApp(){
+export default function ThtwaatPOSApp(){
   const [tenantId,setTenantId]=useState(()=>getTenantId());
   const [isSetup,setIsSetup]=useState(()=>!!DB.get("business",null));
   const [activeTab,setActiveTab]=useState("pos");
@@ -1843,7 +1843,7 @@ export default function RetailPROApp(){
           <div style={{marginBottom:18,padding:"0 5px"}}>
             <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:3}}>
               <span style={{fontSize:20}}>{business.logo||"🏪"}</span>
-              <div><div style={{fontSize:14,fontWeight:900,letterSpacing:"-.5px"}}><span style={{color:C.green}}>Retail</span><span style={{color:C.blue}}>PRO</span></div><div style={{fontSize:8,color:C.muted,fontFamily:"monospace"}}>SaaS v1</div></div>
+              <div><div style={{fontSize:14,fontWeight:900,letterSpacing:"-.5px"}}><span style={{color:C.green}}>Thtwaat</span><span style={{color:C.blue}}>POS</span></div><div style={{fontSize:8,color:C.muted,fontFamily:"monospace"}}>Business Suite</div></div>
             </div>
             <div style={{fontSize:11,color:C.muted,fontWeight:600,paddingLeft:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{business.name||"My Shop"}</div>
           </div>

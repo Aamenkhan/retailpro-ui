@@ -8,7 +8,7 @@ import Signup from "./Signup";
 import BookDemo from "./BookDemo";
 import DemoAccess from "./DemoAccess";
 import Pricing from "./Pricing";
-import RetailPROApp from "./App";
+import ThtwaatPOSApp from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -20,7 +20,7 @@ root.render(
         <Route path="/book-demo" element={<BookDemo />} />
         <Route path="/demo" element={<DemoAccess />} />
         <Route path="/pricing" element={<Pricing />} />
-        <Route path="/app" element={<RetailPROApp />} />
+        <Route path="/app" element={<ThtwaatPOSApp />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

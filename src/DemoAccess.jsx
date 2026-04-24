@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import RetailPROApp from "./App";
+import ThtwaatPOSApp from "./App";
 
 export default function DemoAccess() {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ export default function DemoAccess() {
           Upgrade Now
         </button>
       </div>
-      <RetailPROApp />
+      <ThtwaatPOSApp />
     </div>
   );
 }

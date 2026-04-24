@@ -19,7 +19,7 @@ const featureCards = [
 ];
 
 const testimonials = [
-  { name: "Ramesh Gupta", city: "Bhopal", text: "RetailPRO se billing aur stock dono fast ho gaya. Time bach raha hai daily." },
+  { name: "Ramesh Gupta", city: "Bhopal", text: "Thtwaat POS se billing aur stock dono fast ho gaya. Time bach raha hai daily." },
   { name: "Pooja Jain", city: "Indore", text: "GST bill aur customer history ek click mein mil jata hai. Bahut easy hai." },
   { name: "Imran Khan", city: "Nagpur", text: "Pehle manual kaam hota tha, ab pura shop digital ho gaya hai." },
 ];
@@ -29,7 +29,7 @@ export default function Landing() {
     <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'Space Grotesk', sans-serif" }}>
       <style>{"@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap');"}</style>
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ fontWeight: 900, fontSize: 22 }}><span style={{ color: C.green }}>Retail</span>PRO</div>
+        <div style={{ fontWeight: 900, fontSize: 22 }}><span style={{ color: C.green }}>Thtwaat</span><span style={{ color: "#3B82F6" }}> POS</span></div>
         <Link to="/signup" style={{ textDecoration: "none", background: C.green, color: "#03110B", padding: "10px 16px", borderRadius: 10, fontWeight: 800 }}>Free Demo</Link>
       </nav>
 
@@ -47,7 +47,7 @@ export default function Landing() {
               <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: C.muted }}>
                 <div style={{ textAlign: "center" }}>
                   <div style={{ width: 78, height: 78, borderRadius: "50%", border: `2px solid ${C.green}`, margin: "0 auto 14px", display: "grid", placeItems: "center", color: C.green, fontSize: 28 }}>&#127881;</div>
-                  <div style={{ fontWeight: 700 }}>RetailPRO Demo Video - Coming Soon</div>
+                  <div style={{ fontWeight: 700 }}>Thtwaat POS Demo Video - Coming Soon</div>
                 </div>
               </div>
             </div>
