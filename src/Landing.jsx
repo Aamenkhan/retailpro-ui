@@ -10,12 +10,12 @@ const C = {
 };
 
 const featureCards = [
-  "? Smart POS",
-  "?? Inventory",
-  "?? GST Bills",
-  "?? Customers",
-  "?? Analytics",
-  "?? QR Codes",
+  "Smart POS",
+  "Inventory",
+  "GST Bills",
+  "Customers",
+  "Analytics",
+  "QR Codes",
 ];
 
 const testimonials = [
@@ -35,7 +35,7 @@ export default function Landing() {
 
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "30px 20px 70px" }}>
         <section style={{ textAlign: "center", marginBottom: 42 }}>
-          <h1 style={{ fontSize: "clamp(28px, 5vw, 52px)", marginBottom: 14 }}>Apni Dukan Ko Digital Banao ??</h1>
+          <h1 style={{ fontSize: "clamp(28px, 5vw, 52px)", marginBottom: 14 }}>Apni Dukan Ko Digital Banao &#128640;</h1>
           <p style={{ color: C.muted, maxWidth: 760, margin: "0 auto 22px", fontSize: 18 }}>
             India ka sabse aasan POS + ERP system. GST bills, stock, customers - sab ek jagah.
           </p>
@@ -46,7 +46,7 @@ export default function Landing() {
             <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
               <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: C.muted }}>
                 <div style={{ textAlign: "center" }}>
-                  <div style={{ width: 78, height: 78, borderRadius: "50%", border: `2px solid ${C.green}`, margin: "0 auto 14px", display: "grid", placeItems: "center", color: C.green, fontSize: 28 }}>?</div>
+                  <div style={{ width: 78, height: 78, borderRadius: "50%", border: `2px solid ${C.green}`, margin: "0 auto 14px", display: "grid", placeItems: "center", color: C.green, fontSize: 28 }}>&#127881;</div>
                   <div style={{ fontWeight: 700 }}>RetailPRO Demo Video - Coming Soon</div>
                 </div>
               </div>
@@ -76,17 +76,17 @@ export default function Landing() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))", gap: 12 }}>
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 18 }}>
               <div style={{ color: C.muted, fontSize: 13 }}>Starter</div>
-              <div style={{ fontSize: 28, fontWeight: 900 }}>?0</div>
+              <div style={{ fontSize: 28, fontWeight: 900 }}>&#8377;0</div>
               <div style={{ color: C.green, fontWeight: 700 }}>3 month free trial</div>
             </div>
             <div style={{ background: C.card, border: `1px solid ${C.green}`, borderRadius: 14, padding: 18 }}>
               <div style={{ color: C.muted, fontSize: 13 }}>Pro Plan</div>
-              <div style={{ fontSize: 28, fontWeight: 900 }}>?599/month</div>
+              <div style={{ fontSize: 28, fontWeight: 900 }}>&#8377;599/month</div>
               <div style={{ color: C.muted }}>after free trial</div>
             </div>
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 18 }}>
               <div style={{ color: C.muted, fontSize: 13 }}>Business</div>
-              <div style={{ fontSize: 28, fontWeight: 900 }}>?999/month</div>
+              <div style={{ fontSize: 28, fontWeight: 900 }}>&#8377;999/month</div>
               <div style={{ color: C.muted }}>team + advanced reports</div>
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function Landing() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 12 }}>
             {testimonials.map((t) => (
               <div key={t.name} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 16 }}>
-                <div style={{ marginBottom: 8, color: C.green, fontWeight: 800 }}>{t.name} · {t.city}</div>
+                <div style={{ marginBottom: 8, color: C.green, fontWeight: 800 }}>{t.name} | {t.city}</div>
                 <div style={{ color: C.muted, lineHeight: 1.5 }}>{t.text}</div>
               </div>
             ))}
@@ -106,7 +106,7 @@ export default function Landing() {
       </main>
 
       <footer style={{ borderTop: `1px solid ${C.border}`, padding: 18, textAlign: "center", color: C.muted }}>
-        Made with ?? in India | Bhopal
+        Made with &#10084; in India | Bhopal
       </footer>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const C = { bg: "#04060E", card: "#090E1C", border: "#131B32", text: "#C8D4FF", muted: "#6B7DAA", green: "#00E5A0" };
 
@@ -9,6 +10,7 @@ const slots = [
 ];
 
 export default function BookDemo() {
+  const navigate = useNavigate();
   const signup = safeParse(localStorage.getItem("retailpro_signup")) || {};
   const dates = useMemo(() => {
     const list = [];
@@ -23,7 +25,7 @@ export default function BookDemo() {
   const [selectedDate, setSelectedDate] = useState(dates[0]);
   const [selectedSlot, setSelectedSlot] = useState(slots[0]);
   const [phone, setPhone] = useState(signup.phone || "");
-  const [done, setDone] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -34,18 +36,25 @@ export default function BookDemo() {
       selectedSlot,
       createdAt: Date.now(),
     }));
-    setDone(true);
+    setIsConfirmed(true);
   };
 
-  if (done) {
+  if (isConfirmed) {
     return (
       <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'Space Grotesk', sans-serif", display: "grid", placeItems: "center", padding: 16 }}>
         <div style={{ maxWidth: 560, width: "100%", background: C.card, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24, textAlign: "center" }}>
-          <h2 style={{ color: C.green, marginTop: 0 }}>Demo Confirm Ho Gaya ?</h2>
+          <h2 style={{ color: C.green, marginTop: 0 }}>Demo Confirm Ho Gaya ✓</h2>
           <p style={{ color: C.muted, fontSize: 18 }}>Hum aapko {phone} par call karenge!</p>
           <a href="https://wa.me/919407196146" target="_blank" rel="noreferrer" style={{ color: C.green, fontWeight: 800, textDecoration: "none" }}>
             WhatsApp pe baat karo: wa.me/919407196146
           </a>
+          <button
+            type="button"
+            onClick={() => navigate("/app")}
+            style={{ marginTop: 16, width: "100%", border: "none", background: C.green, color: "#03110B", borderRadius: 12, padding: "13px 16px", fontWeight: 900, fontSize: 17, cursor: "pointer" }}
+          >
+            RetailPRO App Try Karo →
+          </button>
         </div>
       </div>
     );
@@ -54,7 +63,7 @@ export default function BookDemo() {
   return (
     <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'Space Grotesk', sans-serif", display: "grid", placeItems: "center", padding: 16 }}>
       <div style={{ maxWidth: 640, width: "100%", background: C.card, border: `1px solid ${C.border}`, borderRadius: 16, padding: 24 }}>
-        <h1 style={{ marginTop: 0 }}>Demo Book Karo ??</h1>
+        <h1 style={{ marginTop: 0 }}>Demo Book Karo</h1>
         <p style={{ color: C.muted }}>Hamare expert aapko personally setup karenge</p>
 
         <div style={{ background: "#0B1327", border: `1px solid ${C.border}`, borderRadius: 10, padding: 12, marginBottom: 14 }}>
@@ -81,7 +90,7 @@ export default function BookDemo() {
           <input required value={phone} onChange={(e) => setPhone(e.target.value)} style={input} />
 
           <button type="submit" style={{ width: "100%", border: "none", background: C.green, color: "#03110B", borderRadius: 12, padding: "13px 16px", fontWeight: 900, fontSize: 17, cursor: "pointer" }}>
-            Demo Confirm Karo ?
+            Demo Confirm Karo ✓
           </button>
         </form>
 
