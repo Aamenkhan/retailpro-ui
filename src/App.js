@@ -67,7 +67,7 @@ const SEED_SUPPLIERS=[
   {id:"s2",name:"Amul Distributor",type:"Distributor",contact:"Rajesh Patel",phone:"9123456780",email:"amul@dist.in",address:"MP Nagar, Bhopal",gstin:"23AMULDIS1234B1Z5",category:"Dairy",rating:5,creditLimit:0,totalPurchase:0,joinDate:todayK()},
   {id:"s3",name:"Nestle Dist.",type:"Distributor",contact:"Suresh Kumar",phone:"9000123456",email:"nestle@dist.in",address:"Arera Colony, Bhopal",gstin:"23NESTLE12345C1Z5",category:"Snacks",rating:4,creditLimit:0,totalPurchase:0,joinDate:todayK()},
 ];
-const EMPTY_P={name:"",unit:"",retailPrice:"",wholesalePrice:"",costPrice:"",minWholesaleQty:"10",category:"Grocery",stock:"",barcode:"",emoji:"📦",hsn:"",gstRate:"5",reorderLevel:"10",supplierId:"",description:""};
+const EMPTY_P={name:"",unit:"",retailPrice:"",wholesalePrice:"",costPrice:"",minWholesaleQty:"10",category:"Grocery",stock:"",barcode:"",emoji:"📦",photo:"",hsn:"",gstRate:"5",reorderLevel:"10",supplierId:"",description:""};
 
 // ── AI CLAUDE CALL ────────────────────────────────────────────────
 async function callClaude(prompt,imgBase64=null){
@@ -251,6 +251,21 @@ function ProductForm({initial=EMPTY_P,onSave,onCancel,title="Add Product",suppli
           {EMOJIS.map(e=><button key={e} onClick={()=>{s("emoji",e);setShowEmoji(false);}} style={{fontSize:20,background:"none",border:"none",cursor:"pointer",borderRadius:6,padding:"4px 6px"}}>{e}</button>)}
         </div>}
       </div>
+      <div style={{marginBottom:14}}>
+        <label style={lbl}>Product photo (optional)</label>
+        <input type="file" accept="image/*" onChange={e=>{
+          const file=e.target.files?.[0];
+          if(!file)return;
+          const r=new FileReader();
+          r.onload=ev=>s("photo",typeof ev.target?.result==="string"?ev.target.result:"");
+          r.readAsDataURL(file);
+          e.target.value="";
+        }} style={{...inp({padding:"8px 10px",fontSize:12,cursor:"pointer"})}}/>
+        {f.photo&&<div style={{marginTop:10,display:"flex",flexWrap:"wrap",alignItems:"flex-start",gap:10}}>
+          <img src={f.photo} alt="Preview" style={{maxWidth:"100%",maxHeight:140,objectFit:"contain",borderRadius:10,border:`1px solid ${C.border2}`}}/>
+          <button type="button" onClick={()=>s("photo","")} style={{padding:"7px 12px",borderRadius:8,border:`1px solid ${C.red}55`,background:"rgba(239,68,68,.1)",color:C.red,cursor:"pointer",fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,fontSize:12}}>Remove photo</button>
+        </div>}
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
         <div style={{gridColumn:"1/-1"}}><label style={lbl}>Product Name *</label><input style={inp()} value={f.name} onChange={e=>s("name",e.target.value)} placeholder="e.g. Basmati Rice"/></div>
         <div><label style={lbl}>Unit *</label><input style={inp()} value={f.unit} onChange={e=>s("unit",e.target.value)} placeholder="1kg, 500g, 12pk"/></div>
@@ -275,7 +290,7 @@ function ProductForm({initial=EMPTY_P,onSave,onCancel,title="Add Product",suppli
       <div style={{display:"flex",gap:10,marginTop:18}}>
         <button style={{...btn(C.green),flex:1}} onClick={()=>{
           if(!f.name||!f.retailPrice){alert("Name & Retail Price required!");return;}
-          onSave({...f,id:f.id||uid(),retailPrice:Number(f.retailPrice)||0,wholesalePrice:Number(f.wholesalePrice)||0,costPrice:Number(f.costPrice)||0,stock:Number(f.stock)||0,minWholesaleQty:Number(f.minWholesaleQty)||10,gstRate:Number(f.gstRate)||5,reorderLevel:Number(f.reorderLevel)||10});
+          onSave({...f,id:f.id||uid(),retailPrice:Number(f.retailPrice)||0,wholesalePrice:Number(f.wholesalePrice)||0,costPrice:Number(f.costPrice)||0,stock:Number(f.stock)||0,minWholesaleQty:Number(f.minWholesaleQty)||10,gstRate:Number(f.gstRate)||5,reorderLevel:Number(f.reorderLevel)||10,photo:f.photo||""});
         }}>✓ Save Product</button>
         <button onClick={onCancel} style={{padding:"11px 18px",borderRadius:10,border:`1px solid ${C.border2}`,background:"transparent",color:C.muted,cursor:"pointer",fontFamily:"'Space Grotesk',sans-serif",fontWeight:700}}>Cancel</button>
       </div>
@@ -300,7 +315,7 @@ function ProductsPage({products,setProducts,notify}){
 
   const saveAll=list=>{
     const valid=list.filter(p=>p.name&&p.retailPrice);
-    const newProds=[...products,...valid.map((p,i)=>({...EMPTY_P,...p,id:uid()+i,retailPrice:Number(p.retailPrice)||0,wholesalePrice:Number(p.wholesalePrice)||0,costPrice:Number(p.costPrice)||0,stock:Number(p.stock)||0,minWholesaleQty:Number(p.minWholesaleQty)||10,gstRate:Number(p.gstRate)||5,reorderLevel:Number(p.reorderLevel)||10,emoji:p.emoji||"📦"}))];
+    const newProds=[...products,...valid.map((p,i)=>({...EMPTY_P,...p,id:uid()+i,retailPrice:Number(p.retailPrice)||0,wholesalePrice:Number(p.wholesalePrice)||0,costPrice:Number(p.costPrice)||0,stock:Number(p.stock)||0,minWholesaleQty:Number(p.minWholesaleQty)||10,gstRate:Number(p.gstRate)||5,reorderLevel:Number(p.reorderLevel)||10,emoji:p.emoji||"📦",photo:p.photo||""}))];
     setProducts(newProds);DB.set("products",newProds);
     notify(`✓ ${valid.length} product(s) added!`,"success");
     setPreview([]);setMethod(null);setImgPrev(null);
@@ -536,8 +551,8 @@ function QRPage({products,setProducts,notify}){
 
   const printOne=p=>{
     const w=window.open("","_blank","width=380,height=520");
-    w.document.write(`<!DOCTYPE html><html><head><title>QR-${p.name}</title><style>body{font-family:Arial;padding:20px;width:260px;margin:0 auto;text-align:center;}img{border-radius:10px;border:2px solid #eee;}.prices{display:flex;gap:8px;justify-content:center;margin:10px 0;}.pb{border:1px solid #eee;border-radius:8px;padding:7px 12px;}.r{color:#00C896;font-size:18px;font-weight:bold;}.w{color:#3b82f6;font-size:18px;font-weight:bold;}@media print{}</style></head><body>
-    <div style="font-size:32px;margin-bottom:6px">${p.emoji}</div>
+    w.document.write(`<!DOCTYPE html><html><head><title>QR-${p.name}</title><style>body{font-family:Arial;padding:20px;width:260px;margin:0 auto;text-align:center;}img{border-radius:10px;border:2px solid #eee;}.pimg{max-width:220px;max-height:100px;object-fit:cover;border-radius:8px;margin-bottom:8px;}.prices{display:flex;gap:8px;justify-content:center;margin:10px 0;}.pb{border:1px solid #eee;border-radius:8px;padding:7px 12px;}.r{color:#00C896;font-size:18px;font-weight:bold;}.w{color:#3b82f6;font-size:18px;font-weight:bold;}@media print{}</style></head><body>
+    ${p.photo?`<img class="pimg" src="${p.photo}" alt=""/>`:`<div style="font-size:32px;margin-bottom:6px">${p.emoji}</div>`}
     <div style="font-size:16px;font-weight:bold;color:#0a0e1a">${p.name}</div>
     <div style="font-size:12px;color:#666;margin-bottom:10px">${p.unit}${p.barcode?` · ${p.barcode}`:""}</div>
     <img src="${QR_URL(QR_DAT(p),180)}" width="180" height="180"/>
@@ -552,8 +567,8 @@ function QRPage({products,setProducts,notify}){
     const sel=products.filter(p=>selected.includes(p.id));
     if(!sel.length){notify("Select products first","warning");return;}
     const w=window.open("","_blank","width=960,height=720");
-    const cards=sel.map(p=>`<div class="card"><div class="emoji">${p.emoji}</div><div class="name">${p.name}</div><div class="unit">${p.unit}</div><img src="${QR_URL(QR_DAT(p),qrSize)}" width="${qrSize}" height="${qrSize}"/><div class="prices"><div class="pb"><div class="pl">Retail</div><div class="pv r">₹${p.retailPrice}</div></div><div class="pb"><div class="pl">Wholesale</div><div class="pv w">₹${p.wholesalePrice}</div></div></div>${p.barcode?`<div class="bc">${p.barcode}</div>`:""}</div>`).join("");
-    w.document.write(`<!DOCTYPE html><html><head><title>QR Codes (${sel.length})</title><style>body{font-family:Arial;padding:16px;}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(${qrSize+70}px,1fr));gap:12px;}.card{background:#fff;border-radius:10px;padding:14px 10px;text-align:center;border:1px solid #eee;break-inside:avoid;}.emoji{font-size:24px;margin-bottom:4px;}.name{font-size:12px;font-weight:bold;margin-bottom:2px;}.unit{font-size:10px;color:#888;margin-bottom:8px;}img{border-radius:8px;border:1px solid #eee;}.prices{display:flex;justify-content:center;gap:6px;margin-top:8px;flex-wrap:wrap;}.pb{border:1px solid #eee;border-radius:6px;padding:4px 8px;}.pl{font-size:8px;color:#888;text-transform:uppercase;}.pv{font-size:14px;font-weight:bold;}.r{color:#00C896;}.w{color:#3b82f6;}.bc{font-size:8px;color:#aaa;font-family:monospace;margin-top:4px;}@media print{body{background:#fff;}}</style></head><body><div class="grid">${cards}</div><script>window.onload=()=>{window.print();}<\/script></body></html>`);
+    const cards=sel.map(p=>`<div class="card">${p.photo?`<img class="pphoto" src="${p.photo}" alt=""/>`:`<div class="emoji">${p.emoji}</div>`}<div class="name">${p.name}</div><div class="unit">${p.unit}</div><img src="${QR_URL(QR_DAT(p),qrSize)}" width="${qrSize}" height="${qrSize}"/><div class="prices"><div class="pb"><div class="pl">Retail</div><div class="pv r">₹${p.retailPrice}</div></div><div class="pb"><div class="pl">Wholesale</div><div class="pv w">₹${p.wholesalePrice}</div></div></div>${p.barcode?`<div class="bc">${p.barcode}</div>`:""}</div>`).join("");
+    w.document.write(`<!DOCTYPE html><html><head><title>QR Codes (${sel.length})</title><style>body{font-family:Arial;padding:16px;}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(${qrSize+70}px,1fr));gap:12px;}.card{background:#fff;border-radius:10px;padding:14px 10px;text-align:center;border:1px solid #eee;break-inside:avoid;}.pphoto{max-width:100%;max-height:72px;object-fit:cover;border-radius:8px;margin-bottom:4px;border:1px solid #eee;}.emoji{font-size:24px;margin-bottom:4px;}.name{font-size:12px;font-weight:bold;margin-bottom:2px;}.unit{font-size:10px;color:#888;margin-bottom:8px;}img{border-radius:8px;border:1px solid #eee;}.prices{display:flex;justify-content:center;gap:6px;margin-top:8px;flex-wrap:wrap;}.pb{border:1px solid #eee;border-radius:6px;padding:4px 8px;}.pl{font-size:8px;color:#888;text-transform:uppercase;}.pv{font-size:14px;font-weight:bold;}.r{color:#00C896;}.w{color:#3b82f6;}.bc{font-size:8px;color:#aaa;font-family:monospace;margin-top:4px;}@media print{body{background:#fff;}}</style></head><body><div class="grid">${cards}</div><script>window.onload=()=>{window.print();}<\/script></body></html>`);
     w.document.close();
   };
 
@@ -612,7 +627,11 @@ function QRPage({products,setProducts,notify}){
                 </div>
                 <div style={{position:"absolute",top:9,right:9,fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:20,background:product.stock===0?"rgba(239,68,68,.2)":product.stock<=(product.reorderLevel||10)?"rgba(251,191,36,.15)":"rgba(0,229,160,.1)",color:product.stock===0?C.red:product.stock<=(product.reorderLevel||10)?C.yellow:C.green}}>{product.stock===0?"OUT":product.stock}</div>
                 <div style={{textAlign:"center",paddingTop:6,marginBottom:9}}>
-                  <div style={{fontSize:26,marginBottom:3}}>{product.emoji}</div>
+                  {product.photo?(
+                    <img src={product.photo} alt="" style={{width:Math.min(qrSize,120),height:Math.min(qrSize,120),objectFit:"cover",borderRadius:10,margin:"0 auto 6px",display:"block",border:`1px solid ${C.border2}`}}/>
+                  ):(
+                    <div style={{fontSize:26,marginBottom:3}}>{product.emoji}</div>
+                  )}
                   <div style={{fontSize:12,fontWeight:700}}>{product.name}</div>
                   <div style={{fontSize:10,color:C.muted}}>{product.unit}</div>
                 </div>
@@ -775,8 +794,15 @@ function POSPage({products,setProducts,orders,setOrders,notify,mode,setMode}){
         <div style={{flex:1,overflow:"auto",padding:13}}>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(138px,1fr))",gap:9}}>
             {filtered.map(p=>(
-              <div key={p.id} onClick={()=>addToCart(p)} style={{background:C.card,border:`1px solid ${p.stock===0?"rgba(239,68,68,.3)":C.border}`,borderRadius:12,padding:"12px 10px",cursor:p.stock===0?"not-allowed":"pointer",opacity:p.stock===0?.6:1,transition:"all .15s"}}>
-                <div style={{fontSize:24,marginBottom:5}}>{p.emoji}</div>
+              <div key={p.id} onClick={()=>addToCart(p)} style={{background:C.card,border:`1px solid ${p.stock===0?"rgba(239,68,68,.3)":C.border}`,borderRadius:12,overflow:"hidden",cursor:p.stock===0?"not-allowed":"pointer",opacity:p.stock===0?.6:1,transition:"all .15s"}}>
+                {p.photo?(
+                  <div style={{height:72,backgroundImage:`url(${p.photo})`,backgroundSize:"cover",backgroundPosition:"center",position:"relative"}}>
+                    <div style={{position:"absolute",inset:0,background:"linear-gradient(180deg, rgba(4,6,14,.1) 0%, rgba(4,6,14,.78) 100%)"}}/>
+                  </div>
+                ):(
+                  <div style={{fontSize:24,textAlign:"center",paddingTop:12,paddingBottom:2}}>{p.emoji}</div>
+                )}
+                <div style={{padding:"8px 10px 12px"}}>
                 <div style={{fontSize:12,fontWeight:700,marginBottom:2}}>{p.name}</div>
                 <div style={{fontSize:10,color:C.muted,marginBottom:6}}>{p.unit}</div>
                 <div style={{fontSize:15,fontWeight:900,color:p.stock===0?C.red:accent}}>{p.stock===0?"OUT":fmt(price(p))}</div>
@@ -784,6 +810,7 @@ function POSPage({products,setProducts,orders,setOrders,notify,mode,setMode}){
                 <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
                   <span style={{fontSize:9,color:C.muted}}>{p.category}</span>
                   <span style={{fontSize:9,fontWeight:700,color:p.stock===0?C.red:p.stock<=(p.reorderLevel||10)?C.yellow:C.muted}}>{p.stock===0?"🚨0":p.stock<=(p.reorderLevel||10)?`⚠${p.stock}`:p.stock}</span>
+                </div>
                 </div>
               </div>
             ))}
@@ -1596,7 +1623,14 @@ function InventoryPage({products,setProducts,notify}){
         </div>
         {products.sort((a,b)=>a.stock-b.stock).map(p=>(
           <div key={p.id} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr 1fr 1fr",padding:"11px 16px",borderBottom:`1px solid ${C.dim}`,background:p.stock===0?"rgba(239,68,68,.03)":"transparent",fontSize:12,alignItems:"center"}}>
-            <span style={{fontWeight:600}}>{p.emoji} {p.name} <span style={{color:C.muted,fontSize:10}}>({p.unit})</span></span>
+            <span style={{fontWeight:600,display:"flex",alignItems:"center",gap:10,minWidth:0}}>
+              {p.photo?(
+                <img src={p.photo} alt="" style={{width:40,height:40,objectFit:"cover",borderRadius:8,flexShrink:0,border:`1px solid ${C.border2}`}}/>
+              ):(
+                <span style={{fontSize:20}}>{p.emoji}</span>
+              )}
+              <span><span style={{wordBreak:"break-word"}}>{p.name}</span> <span style={{color:C.muted,fontSize:10}}>({p.unit})</span></span>
+            </span>
             <span style={{color:C.muted}}>{p.category}</span>
             <span style={{fontWeight:700,color:C.green}}>{fmt(p.retailPrice)}</span>
             <span style={{fontWeight:700,color:C.blue}}>{fmt(p.wholesalePrice)}</span>
