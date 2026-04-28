@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { getTenantId, DB } from "./api";
+import { logoutTenant, ensureDemoTenant } from "./auth";
+import Login from "./Login";
 
 /* ══════════════════════════════════════════════════════════════════
    Thtwaat Business Suite — ULTIMATE COMPLETE EDITION
@@ -27,70 +30,8 @@ const QR_URL = (data,size=160) => `https://api.qrserver.com/v1/create-qr-code/?s
 const QR_DAT = p => `RPPROD|${p.id}|${p.name}|${p.barcode||""}|R:${p.retailPrice}|W:${p.wholesalePrice}|U:${p.unit}`;
 
 // ── STORAGE (MULTI TENANT) ────────────────────────────────────────
-const TENANTS_KEY = "rp_tenants";
-const CURRENT_TENANT_KEY = "rp_current_tenant";
+// Storage helpers moved to src/api.js and auth flow moved to src/auth.js
 
-const getTenantId = () => localStorage.getItem(CURRENT_TENANT_KEY) || "";
-const tenantScopedKey = (k) => {
-  const tenantId = getTenantId();
-  return tenantId ? `rp_${tenantId}_${k}` : "";
-};
-
-const getTenants = () => {
-  try {
-    const raw = localStorage.getItem(TENANTS_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveTenants = (list) => {
-  try { localStorage.setItem(TENANTS_KEY, JSON.stringify(list)); } catch {}
-};
-
-const seedTenantData = () => {
-  if (!getTenantId()) return;
-  if (!DB.get("products", null)) DB.set("products", SEED_PRODUCTS);
-  if (!DB.get("suppliers", null)) DB.set("suppliers", SEED_SUPPLIERS);
-  if (!DB.get("customers", null)) DB.set("customers", []);
-  if (!DB.get("employees", null)) DB.set("employees", []);
-  if (!DB.get("orders", null)) DB.set("orders", []);
-  if (!DB.get("purchases", null)) DB.set("purchases", []);
-  if (!DB.get("credits", null)) DB.set("credits", []);
-  if (!DB.get("expenses", null)) DB.set("expenses", []);
-  if (!DB.get("attendance", null)) DB.set("attendance", []);
-};
-
-const ensureDemoTenant = () => {
-  const tenants = getTenants();
-  const demoExists = tenants.some((t) => t.username === "demo");
-  if (!demoExists) {
-    tenants.push({
-      id: "demo",
-      username: "demo",
-      password: "demo123",
-      businessName: "Demo Store - Bhopal",
-      phone: "9407196146",
-      plan: "free",
-      createdAt: Date.now(),
-    });
-    saveTenants(tenants);
-  }
-  const prev = getTenantId();
-  localStorage.setItem(CURRENT_TENANT_KEY, "demo");
-  if (!DB.get("business", null)) {
-    DB.set("business", { id: "demo-biz", name: "Demo Store - Bhopal", ownerName: "Demo Owner", phone: "9407196146", city: "Bhopal", logo: "🏪" });
-  }
-  seedTenantData();
-  if (prev) localStorage.setItem(CURRENT_TENANT_KEY, prev); else localStorage.removeItem(CURRENT_TENANT_KEY);
-};
-
-const DB = {
-  get:(k,d)=>{ try{const scoped=tenantScopedKey(k); if(!scoped) return d; const v=localStorage.getItem(scoped);return v?JSON.parse(v):d;}catch{return d;} },
-  set:(k,v)=>{ try{const scoped=tenantScopedKey(k); if(!scoped) return; localStorage.setItem(scoped,JSON.stringify(v));}catch{} },
-};
 
 // ── DESIGN TOKENS ─────────────────────────────────────────────────
 const C={
@@ -189,46 +130,6 @@ const StatCard=({icon,label,value,sub,color=C.green})=>(
 const inp=(ex={})=>({width:"100%",background:C.dim,border:`1px solid ${C.border2}`,borderRadius:9,padding:"10px 13px",color:C.text,fontFamily:"'Space Grotesk',sans-serif",fontSize:13,outline:"none",...ex});
 const lbl={fontSize:10,color:C.muted,marginBottom:5,display:"block",fontWeight:700,textTransform:"uppercase",letterSpacing:.5};
 const btn=(color=C.green,ex={})=>({background:`linear-gradient(135deg,${color}CC,${color})`,color:color===C.green||color===C.yellow?"#030810":"#fff",border:"none",borderRadius:10,padding:"11px 20px",cursor:"pointer",fontFamily:"'Space Grotesk',sans-serif",fontWeight:800,fontSize:13,...ex});
-
-function LoginScreen({onLogin}){
-  const [username,setUsername]=useState("");
-  const [password,setPassword]=useState("");
-  const [err,setErr]=useState("");
-
-  const submit=()=>{
-    const u=username.trim().toLowerCase();
-    const p=password.trim();
-    if(!u||!p){setErr("Username/password daalo");return;}
-    if(u==="demo"&&p==="demo123"){
-      localStorage.setItem(CURRENT_TENANT_KEY,"demo");
-      seedTenantData();
-      setErr("");
-      onLogin("demo");
-      return;
-    }
-    const tenants=getTenants();
-    const matched=tenants.find(t=>t.username===u&&t.password===p);
-    if(!matched){setErr("Invalid login details");return;}
-    localStorage.setItem(CURRENT_TENANT_KEY,matched.id||matched.username);
-    seedTenantData();
-    setErr("");
-    onLogin(matched.id||matched.username);
-  };
-
-  return(
-    <div style={{minHeight:"100vh",background:C.bg,color:C.text,fontFamily:"'Space Grotesk',sans-serif",display:"grid",placeItems:"center",padding:16}}>
-      <div style={{width:"100%",maxWidth:430,background:C.card,border:`1px solid ${C.border2}`,borderRadius:18,padding:24}}>
-        <div style={{fontSize:28,fontWeight:900,marginBottom:4}}><span style={{color:C.green}}>Thtwaat</span><span style={{color:C.blue}}> POS</span></div>
-        <div style={{fontSize:18,fontWeight:800,marginBottom:16}}>Apni Dukan mein Login Karo</div>
-        <div style={{marginBottom:11}}><label style={lbl}>Username</label><input value={username} onChange={e=>setUsername(e.target.value)} style={inp()} placeholder="demo"/></div>
-        <div style={{marginBottom:12}}><label style={lbl}>Password</label><input type="password" value={password} onChange={e=>setPassword(e.target.value)} style={inp()} placeholder="demo123"/></div>
-        {err&&<div style={{fontSize:12,color:C.red,marginBottom:10}}>{err}</div>}
-        <button onClick={submit} style={{...btn(C.green),width:"100%"}}>Login Karo</button>
-        <a href="/signup" style={{display:"inline-block",marginTop:12,color:C.green,fontSize:13,fontWeight:700,textDecoration:"none"}}>Naya Account? Free Demo</a>
-      </div>
-    </div>
-  );
-}
 
 // ══════════════════════════════════════════════════════════════════
 // ONBOARDING
@@ -1808,7 +1709,7 @@ export default function ThtwaatPOSApp(){
     {id:"inventory", icon:"🗂️", label:"Inventory"},
   ];
 
-  useEffect(()=>{ensureDemoTenant();},[]);
+  useEffect(()=>{ensureDemoTenant({ seedProducts: SEED_PRODUCTS, seedSuppliers: SEED_SUPPLIERS });},[]);
   useEffect(()=>{
     if(!tenantId)return;
     setIsSetup(!!DB.get("business",null));
@@ -1817,11 +1718,11 @@ export default function ThtwaatPOSApp(){
   },[tenantId]);
 
   const logout=()=>{
-    localStorage.removeItem(CURRENT_TENANT_KEY);
+    logoutTenant();
     window.location.reload();
   };
 
-  if(!tenantId)return<LoginScreen onLogin={setTenantId}/>;
+  if(!tenantId)return<Login onLogin={setTenantId} seedProducts={SEED_PRODUCTS} seedSuppliers={SEED_SUPPLIERS}/>;
   if(!isSetup)return<Onboarding onComplete={()=>{setIsSetup(true);setProducts(DB.get("products",SEED_PRODUCTS));}}/>;
 
   return(

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-
+import Login from "./Login";
+import { getToken, clearAuth } from "./api";
 /* ══════════════════════════════════════════════════════════════════
    RetailPRO SaaS — ULTIMATE COMPLETE EDITION
    ✅ Onboarding (Business + Owner setup)
@@ -1619,6 +1620,10 @@ function InventoryPage({products,setProducts,notify}){
 // MAIN APP
 // ══════════════════════════════════════════════════════════════════
 export default function RetailPROApp(){
+  const [isLoggedIn, setIsLoggedIn] = useState(!!getToken());
+  if (!isLoggedIn) {
+    return <Login onLogin={() => setIsLoggedIn(true)} />;
+  }
   const [isSetup,setIsSetup]=useState(()=>!!DB.get("business",null));
   const [activeTab,setActiveTab]=useState("pos");
   const [mode,setMode]=useState("retail");
