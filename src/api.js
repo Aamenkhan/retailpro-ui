@@ -22,13 +22,17 @@ async function req(method, path, body = null) {
     body: body ? JSON.stringify(body) : null,
   });
 
+  const data = await res.json();
+
   if (res.status === 401) {
-    clearAuth();
-    window.location.href = "/";
-    return;
+    if (!path.startsWith("/auth")) {
+      clearAuth();
+      window.location.href = "/";
+      return;
+    }
+    throw new Error(data.message || "Invalid email or password");
   }
 
-  const data = await res.json();
   if (!res.ok) throw new Error(data.message || "API Error");
   return data;
 }
