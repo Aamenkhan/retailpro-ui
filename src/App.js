@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import ShopAuth from "./ShopAuth";
+import PosApp from "./PosApp";
+import { clearSession, restoreSession, clearLegacyGlobalData } from "./shopStorage";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+  const [shop, setShop] = useState(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    clearLegacyGlobalData();
+    setShop(restoreSession());
+    setReady(true);
+  }, []);
+
+  const handleLogout = () => {
+    clearSession();
+    setShop(null);
+  };
+
+  if (!ready) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#080C18",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#4A5580",
+          fontFamily: "'Syne', sans-serif",
+        }}
+      >
+        Loading…
+      </div>
+    );
+  }
+
+  if (!shop) {
+    return <ShopAuth onLogin={setShop} />;
+  }
+
+  return <PosApp key={shop.id} shop={shop} onLogout={handleLogout} />;
 }
-
-export default App;
