@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { loadShopData, saveShopData } from "./shopStorage";
+import {
+  loadShopData,
+  saveShopData,
+  normPhone,
+  getShopWhatsAppPhone,
+} from "./shopStorage";
+import { formatBillMessage, openWhatsApp, upsertCustomer } from "./whatsapp";
+import WhatsAppTab from "./WhatsAppTab";
 
 const CATS = [
   "All",
@@ -28,6 +35,20 @@ const ACCENT = "#6C5CE7";
 const GREEN = "#00B894";
 const RED = "#FF6B6B";
 const ORANGE = "#FDCB6E";
+const WA_GREEN = "#25D366";
+
+const btnWa = {
+  flex: 1,
+  background: WA_GREEN,
+  color: "#fff",
+  border: "none",
+  borderRadius: 8,
+  padding: "10px 0",
+  fontFamily: FF,
+  fontWeight: 700,
+  cursor: "pointer",
+  fontSize: 13,
+};
 
 function Toast({ msg, type, onDone }) {
   useEffect(() => {
@@ -61,7 +82,17 @@ function Toast({ msg, type, onDone }) {
   );
 }
 
-function ReceiptModal({ order, shopName, onClose }) {
+function ReceiptModal({ order, shopName, shopPhone, onClose, showToast }) {
+  const sendBillWhatsApp = () => {
+    if (!order.customerPhone || normPhone(order.customerPhone).length < 10) {
+      showToast?.("Customer ka 10-digit mobile daalo", "error");
+      return;
+    }
+    const text = formatBillMessage(order, shopName, shopPhone);
+    if (openWhatsApp(order.customerPhone, text)) {
+      showToast?.("WhatsApp khul gaya — Send dabao", "ok");
+    }
+  };
   const printRef = useRef(null);
   const handlePrint = () => {
     const w = window.open("", "_blank");
@@ -73,6 +104,7 @@ function ReceiptModal({ order, shopName, onClose }) {
       td{padding:4px 0}.r{text-align:right}.tot{font-weight:bold;border-top:2px dashed #000;padding-top:8px}
       </style></head><body>
       <h2>${shopName}</h2>
+      ${shopPhone ? `<p style="text-align:center;margin:0;font-size:12px">📞 +91 ${normPhone(shopPhone)}</p>` : ""}
       <p style="text-align:center;margin:0 0 12px;font-size:12px">${order.id} · ${new Date(order.ts).toLocaleString("en-IN")}</p>
       <table>${order.items.map((i) => `<tr><td>${i.name} x${i.qty}</td><td class="r">${fmt(i.lineTotal)}</td></tr>`).join("")}
       <tr><td>Subtotal</td><td class="r">${fmt(order.subtotal)}</td></tr>
@@ -114,9 +146,14 @@ function ReceiptModal({ order, shopName, onClose }) {
           fontSize: 13,
         }}
       >
-        <h2 style={{ textAlign: "center", margin: "0 0 8px", fontFamily: FF }}>
+        <h2 style={{ textAlign: "center", margin: "0 0 4px", fontFamily: FF }}>
           {shopName}
         </h2>
+        {shopPhone && (
+          <p style={{ textAlign: "center", margin: "0 0 8px", fontSize: 12, color: "#25D366", fontWeight: 700 }}>
+            📞 WhatsApp: +91 {normPhone(shopPhone)}
+          </p>
+        )}
         <p style={{ textAlign: "center", margin: "0 0 16px", fontSize: 11, color: "#666" }}>
           {order.id} · {new Date(order.ts).toLocaleString("en-IN")}
         </p>
@@ -139,8 +176,12 @@ function ReceiptModal({ order, shopName, onClose }) {
         <p style={{ textAlign: "center", marginTop: 12, fontSize: 11 }}>
           {order.payment} · {order.mode}
           {order.customer ? ` · ${order.customer}` : ""}
+          {order.customerPhone ? ` · 📱 ${order.customerPhone}` : ""}
         </p>
-        <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+        <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
+          <button type="button" onClick={sendBillWhatsApp} style={btnWa}>
+            📲 WhatsApp Bill
+          </button>
           <button type="button" onClick={handlePrint} style={btnPri}>
             Print
           </button>
@@ -358,6 +399,7 @@ function PosTab({ products, onCheckout, showToast }) {
   const [discount, setDiscount] = useState(0);
   const [payment, setPayment] = useState("Cash");
   const [customer, setCustomer] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const priceOf = (p) => (mode === "wholesale" ? p.wholesalePrice : p.retailPrice);
   const filtered = products.filter((p) => {
     const q = search.toLowerCase();
@@ -431,7 +473,8 @@ function PosTab({ products, onCheckout, showToast }) {
       ts: Date.now(),
       date: todayK(),
       mode,
-      customer: mode === "wholesale" ? customer.trim() : "",
+      customer: customer.trim(),
+      customerPhone: normPhone(customerPhone),
       items,
       subtotal,
       discount: disc,
@@ -443,6 +486,7 @@ function PosTab({ products, onCheckout, showToast }) {
     setCart([]);
     setDiscount(0);
     setCustomer("");
+    setCustomerPhone("");
   };
   return (
     <div style={{ display: "flex", gap: 16, height: "calc(100vh - 40px)" }}>
@@ -579,14 +623,19 @@ function PosTab({ products, onCheckout, showToast }) {
             </div>
           ))}
         </div>
-        {mode === "wholesale" && (
-          <input
-            style={{ ...inp, marginBottom: 10 }}
-            placeholder="Customer name *"
-            value={customer}
-            onChange={(e) => setCustomer(e.target.value)}
-          />
-        )}
+        <input
+          style={{ ...inp, marginBottom: 8 }}
+          placeholder={mode === "wholesale" ? "Customer name *" : "Customer name (optional)"}
+          value={customer}
+          onChange={(e) => setCustomer(e.target.value)}
+        />
+        <input
+          style={{ ...inp, marginBottom: 10 }}
+          placeholder="Customer mobile (WhatsApp bill)"
+          value={customerPhone}
+          onChange={(e) => setCustomerPhone(e.target.value)}
+          inputMode="numeric"
+        />
         <label style={{ fontSize: 11, color: MUTED }}>Discount (₹)</label>
         <input
           style={{ ...inp, marginBottom: 10 }}
@@ -632,7 +681,15 @@ function PosTab({ products, onCheckout, showToast }) {
   );
 }
 
-function OrdersTab({ orders, onReceipt }) {
+function OrdersTab({ orders, onReceipt, shopName, shopPhone, showToast }) {
+  const sendBill = (o) => {
+    if (!o.customerPhone || normPhone(o.customerPhone).length < 10) {
+      showToast("Is order mein customer mobile nahi", "error");
+      return;
+    }
+    openWhatsApp(o.customerPhone, formatBillMessage(o, shopName, shopPhone));
+    showToast("WhatsApp khul gaya — Send dabao");
+  };
   return (
     <div>
       <h2 style={{ margin: "0 0 16px", fontSize: 20 }}>Order history</h2>
@@ -663,8 +720,13 @@ function OrdersTab({ orders, onReceipt }) {
                 {o.items.map((i) => `${i.name}×${i.qty}`).join(", ")}
               </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <span style={{ fontSize: 18, fontWeight: 800, color: GREEN }}>{fmt(o.total)}</span>
+              {o.customerPhone && normPhone(o.customerPhone).length >= 10 && (
+                <button type="button" onClick={() => sendBill(o)} style={btnWa}>
+                  📲 Bill
+                </button>
+              )}
               <button type="button" onClick={() => onReceipt(o)} style={btnSec}>Receipt</button>
             </div>
           </div>
@@ -840,10 +902,12 @@ function QrTab({ products, shopName }) {
   );
 }
 
-export default function PosApp({ shop, onLogout }) {
+export default function PosApp({ shop, onLogout, onShopUpdate }) {
+  const shopPhone = getShopWhatsAppPhone(shop);
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [stockLog, setStockLog] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [tab, setTab] = useState("pos");
   const [toast, setToast] = useState(null);
   const [receipt, setReceipt] = useState(null);
@@ -856,6 +920,7 @@ export default function PosApp({ shop, onLogout }) {
     setProducts([]);
     setOrders([]);
     setStockLog([]);
+    setCustomers([]);
     setTab("pos");
     setReceipt(null);
 
@@ -863,17 +928,18 @@ export default function PosApp({ shop, onLogout }) {
     setProducts(data.products);
     setOrders(data.orders);
     setStockLog(data.stockLog);
+    setCustomers(data.customers);
     setSyncedShopId(shop.id);
   }, [shop.id]);
 
   useEffect(() => {
     if (syncedShopId !== shop.id) return;
-    saveShopData(shop.id, { products, orders, stockLog });
-  }, [products, orders, stockLog, shop.id, syncedShopId]);
+    saveShopData(shop.id, { products, orders, stockLog, customers });
+  }, [products, orders, stockLog, customers, shop.id, syncedShopId]);
 
   const handleLogout = () => {
     if (syncedShopId === shop.id) {
-      saveShopData(shop.id, { products, orders, stockLog });
+      saveShopData(shop.id, { products, orders, stockLog, customers });
     }
     onLogout();
   };
@@ -963,6 +1029,7 @@ export default function PosApp({ shop, onLogout }) {
     { id: "stocklog", label: "Stock log", icon: "📝" },
     { id: "addproduct", label: "Add product", icon: "➕" },
     { id: "qr", label: "QR codes", icon: "📱" },
+    { id: "whatsapp", label: "WhatsApp", icon: "💬" },
   ];
 
   return (
@@ -982,7 +1049,9 @@ export default function PosApp({ shop, onLogout }) {
           <div style={{ fontSize: 18, fontWeight: 800, color: TEXT, lineHeight: 1.2 }}>
             {shop.shopName}
           </div>
-          <div style={{ fontSize: 12, color: MUTED, marginTop: 4 }}>📞 {shop.phone}</div>
+          <div style={{ fontSize: 12, color: WA_GREEN, marginTop: 6, fontWeight: 600 }}>
+            📲 WhatsApp: +91 {shopPhone || "—"}
+          </div>
           <div style={{ fontSize: 10, color: GREEN, marginTop: 8 }}>🔒 Sirf is dukaan ke {products.length} products</div>
         </div>
         <div
@@ -1047,13 +1116,29 @@ export default function PosApp({ shop, onLogout }) {
               const alerts = reduceStock(cart);
               setOrders([order, ...orders]);
               setReceipt(order);
+              if (order.customerPhone && normPhone(order.customerPhone).length >= 10) {
+                setCustomers((prev) =>
+                  upsertCustomer(prev, {
+                    name: order.customer,
+                    phone: order.customerPhone,
+                  })
+                );
+              }
               alerts.forEach((a) => showToast(a, "warn"));
               showToast(`Order ${order.id} complete`);
             }}
             showToast={showToast}
           />
         )}
-        {tab === "orders" && <OrdersTab orders={orders} onReceipt={setReceipt} />}
+        {tab === "orders" && (
+          <OrdersTab
+            orders={orders}
+            onReceipt={setReceipt}
+            shopName={shop.shopName}
+            shopPhone={shopPhone}
+            showToast={showToast}
+          />
+        )}
         {tab === "inventory" && (
           <InventoryTab products={products} onAdjust={adjustStock} />
         )}
@@ -1061,6 +1146,17 @@ export default function PosApp({ shop, onLogout }) {
         {tab === "stocklog" && <StockLogTab stockLog={stockLog} />}
         {tab === "addproduct" && <ProductForm onSave={addProduct} />}
         {tab === "qr" && <QrTab products={products} shopName={shop.shopName} />}
+        {tab === "whatsapp" && (
+          <WhatsAppTab
+            products={products}
+            shop={shop}
+            shopPhone={shopPhone}
+            customers={customers}
+            setCustomers={setCustomers}
+            showToast={showToast}
+            onShopUpdate={onShopUpdate}
+          />
+        )}
       </main>
 
       {toast && (
@@ -1070,7 +1166,9 @@ export default function PosApp({ shop, onLogout }) {
         <ReceiptModal
           order={receipt}
           shopName={shop.shopName}
+          shopPhone={shopPhone}
           onClose={() => setReceipt(null)}
+          showToast={showToast}
         />
       )}
     </div>

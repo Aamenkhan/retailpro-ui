@@ -40,5 +40,12 @@ export default function App() {
     return <ShopAuth onLogin={setShop} />;
   }
 
-  return <PosApp key={shop.id} shop={shop} onLogout={handleLogout} />;
+  return (
+    <PosApp
+      key={shop.id}
+      shop={shop}
+      onLogout={handleLogout}
+      onShopUpdate={setShop}
+    />
+  );
 }

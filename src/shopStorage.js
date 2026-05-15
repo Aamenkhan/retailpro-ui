@@ -50,15 +50,16 @@ export const cloneInitialProductsForShop = (shopId) => {
 
 export const defaultShopData = (shopId) => ({
   _shopId: shopId,
-  _version: 2,
+  _version: 3,
   products: cloneInitialProductsForShop(shopId),
   orders: [],
   stockLog: [],
+  customers: [],
 });
 
 export const loadShopData = (shopId) => {
   if (!shopId) {
-    return { products: [], orders: [], stockLog: [] };
+    return { products: [], orders: [], stockLog: [], customers: [] };
   }
   const data = loadJSON(dataKey(shopId), null);
   if (!data) return defaultShopData(shopId);
@@ -69,6 +70,7 @@ export const loadShopData = (shopId) => {
     products: Array.isArray(data.products) ? data.products : [],
     orders: Array.isArray(data.orders) ? data.orders : [],
     stockLog: Array.isArray(data.stockLog) ? data.stockLog : [],
+    customers: Array.isArray(data.customers) ? data.customers : [],
   };
 };
 
@@ -78,8 +80,9 @@ export const saveShopData = (shopId, payload) => {
     products: payload.products ?? [],
     orders: payload.orders ?? [],
     stockLog: payload.stockLog ?? [],
+    customers: payload.customers ?? [],
     _shopId: shopId,
-    _version: 2,
+    _version: 3,
   });
 };
 
@@ -106,6 +109,7 @@ export const registerShop = ({ shopName, phone, password }) => {
     id: `shop_${Date.now()}`,
     shopName: shopName.trim(),
     phone: ph,
+    whatsappPhone: ph,
     password,
     createdAt: Date.now(),
   };
@@ -126,4 +130,18 @@ export const restoreSession = () => {
   if (!session?.shopId) return null;
   const acc = loadAccounts().find((a) => a.id === session.shopId);
   return acc || null;
+};
+
+/** Dukaan ka WhatsApp mobile — bill / customer message ke liye */
+export const getShopWhatsAppPhone = (shop) =>
+  normPhone(shop?.whatsappPhone || shop?.phone || "");
+
+export const updateShopWhatsAppPhone = (shopId, phone) => {
+  const ph = normPhone(phone);
+  if (ph.length < 10) return { error: "Sahi 10-digit mobile daalo" };
+  const accounts = loadAccounts().map((a) =>
+    a.id === shopId ? { ...a, phone: ph, whatsappPhone: ph } : a
+  );
+  saveAccounts(accounts);
+  return { account: accounts.find((a) => a.id === shopId) };
 };

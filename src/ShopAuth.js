@@ -164,8 +164,11 @@ export default function ShopAuth({ onLogin }) {
           )}
           {tab === "login" ? (
             <form onSubmit={handleLogin}>
-              <label style={{ fontSize: 11, color: "#4A5580", fontWeight: 700 }}>MOBILE</label>
+              <label style={{ fontSize: 11, color: "#4A5580", fontWeight: 700 }}>DUKAAN WHATSAPP MOBILE</label>
               <input style={inp} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="9876543210" />
+              <p style={{ fontSize: 10, color: "#4A5580", margin: "-6px 0 10px", lineHeight: 1.4 }}>
+                Login + bill/message — har dukaan ka alag number
+              </p>
               <label style={{ fontSize: 11, color: "#4A5580", fontWeight: 700 }}>PASSWORD</label>
               <input style={inp} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" />
               <button
@@ -190,8 +193,11 @@ export default function ShopAuth({ onLogin }) {
             <form onSubmit={handleRegister}>
               <label style={{ fontSize: 11, color: "#4A5580", fontWeight: 700 }}>DUKAAN KA NAAM</label>
               <input style={inp} value={shopName} onChange={(e) => setShopName(e.target.value)} placeholder="Sharma Kirana" />
-              <label style={{ fontSize: 11, color: "#4A5580", fontWeight: 700 }}>MOBILE</label>
+              <label style={{ fontSize: 11, color: "#4A5580", fontWeight: 700 }}>DUKAAN WHATSAPP MOBILE</label>
               <input style={inp} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="9876543210" />
+              <p style={{ fontSize: 10, color: "#4A5580", margin: "-6px 0 10px", lineHeight: 1.4 }}>
+                Bill aur customer message isi number se — har shop alag
+              </p>
               <label style={{ fontSize: 11, color: "#4A5580", fontWeight: 700 }}>PASSWORD</label>
               <input style={inp} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 4 chars" />
               <label style={{ fontSize: 11, color: "#4A5580", fontWeight: 700 }}>CONFIRM PASSWORD</label>
