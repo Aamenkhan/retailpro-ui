@@ -47,7 +47,7 @@ export default function Login({ onLogin }) {
         password: regForm.password,
       });
       setError("");
-      alert(`Shop registered! Trial: 14 days. Ab login karo.`);
+      alert(`Shop registered! 7 day free trial. Ab login karo.`);
       setTab("login");
       setLoginForm({ email: regForm.email, password: "" });
     } catch (e) {
@@ -141,7 +141,7 @@ export default function Login({ onLogin }) {
                 </div>
               </div>
               <div style={{background:"rgba(0,229,160,.05)",border:`1px solid ${C.green}22`,borderRadius:9,padding:10,fontSize:11,color:C.muted}}>
-                ✓ 14 day free trial · No credit card · ₹499/month baad mein
+                ✓ 7 day free trial · No credit card · Subscribe after trial
               </div>
               <button onClick={handleRegister} disabled={loading} style={{background:`linear-gradient(135deg,${C.blue}CC,${C.blue})`,color:"#fff",border:"none",borderRadius:11,padding:"13px 0",cursor:"pointer",fontFamily:"'Space Grotesk',sans-serif",fontWeight:800,fontSize:14,opacity:loading?0.7:1}}>
                 {loading ? "Registering..." : "🏪 Register Shop"}

@@ -17,7 +17,7 @@ const plans = [
     tier: "STARTER",
     name: "Starter",
     price: "₹0",
-    sub: "3 months free trial",
+    sub: "7 day free trial",
     features: ["POS Billing", "Inventory", "Basic Reports"],
     cta: "Start Free Trial",
     paid: false,

@@ -33,7 +33,7 @@ export default function Signup() {
     <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'Space Grotesk', sans-serif", display: "grid", placeItems: "center", padding: 16 }}>
       <style>{"@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap');"}</style>
       <form onSubmit={handleSubmit} style={{ width: "100%", maxWidth: 520, background: C.card, border: `1px solid ${C.border}`, borderRadius: 16, padding: 22 }}>
-        <h1 style={{ margin: 0, marginBottom: 8 }}>3 Mahine Free Shuru Karo</h1>
+        <h1 style={{ margin: 0, marginBottom: 8 }}>7 Din Free Trial Shuru Karo</h1>
         <p style={{ color: C.muted, marginTop: 0, marginBottom: 16 }}>Koi credit card nahi chahiye</p>
 
         <Field label="Business Name" value={form.businessName} onChange={(v) => setForm((p) => ({ ...p, businessName: v }))} required />
@@ -59,7 +59,7 @@ export default function Signup() {
           Free Demo Shuru Karo ?
         </button>
 
-        <div style={{ marginTop: 14, color: C.muted, fontSize: 14 }}>? 3 months free ? No credit card ? Setup in 5 minutes</div>
+        <div style={{ marginTop: 14, color: C.muted, fontSize: 14 }}>7 days free · No credit card · Setup in 5 minutes</div>
       </form>
     </div>
   );

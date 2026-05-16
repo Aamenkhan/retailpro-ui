@@ -44,7 +44,7 @@ export default function Landing() {
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "50px 20px 80px" }}>
         <section style={{ textAlign: "center", marginBottom: 60 }}>
           <div style={{ display: "inline-block", background: "rgba(0,229,160,0.1)", border: `1px solid ${C.green}44`, borderRadius: 20, padding: "6px 16px", fontSize: 13, color: C.green, fontWeight: 700, marginBottom: 20 }}>
-            3 Months Free — No Credit Card Required
+            7 Days Free — No Credit Card Required
           </div>
           <h1 style={{ fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 900, marginBottom: 18, lineHeight: 1.15 }}>
             The Complete POS System<br />
@@ -89,7 +89,7 @@ export default function Landing() {
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 24 }}>
               <div style={{ color: C.muted, fontSize: 13, fontWeight: 700, marginBottom: 8 }}>STARTER</div>
               <div style={{ fontSize: 32, fontWeight: 900, marginBottom: 4 }}>&#8377;0</div>
-              <div style={{ color: C.green, fontWeight: 700, marginBottom: 14 }}>3 month free trial</div>
+              <div style={{ color: C.green, fontWeight: 700, marginBottom: 14 }}>7 day free trial</div>
               <div style={{ color: C.muted, fontSize: 13, marginBottom: 14 }}>Full access · No credit card</div>
               <Link to="/signup" style={{ display: "block", textAlign: "center", textDecoration: "none", background: "#1A243F", color: C.text, borderRadius: 10, padding: "11px 12px", fontWeight: 900, fontSize: 13 }}>Start Free Trial</Link>
             </div>
