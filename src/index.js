@@ -8,7 +8,7 @@ import Signup from "./Signup";
 import BookDemo from "./BookDemo";
 import DemoAccess from "./DemoAccess";
 import Pricing from "./Pricing";
-import ThtwaatPOSApp from "./App";
+import ThtwaatPOSApp from "./App.jsx";
 import OnboardingStep1 from "./onboarding/OnboardingStep1";
 import OnboardingStep2 from "./onboarding/OnboardingStep2";
 import OnboardingStep3 from "./onboarding/OnboardingStep3";
