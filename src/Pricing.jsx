@@ -76,6 +76,8 @@ export default function Pricing() {
       .then((c) => {
         if (!c.razorpayConfigured) {
           setPaymentMode("Payment setup pending");
+        } else if (c.plans?.duplicateIds) {
+          setPaymentMode("Business plan misconfigured on server — contact support");
         } else if (c.liveMode) {
           setPaymentMode("Secure payment · Razorpay Live");
         } else {
