@@ -54,11 +54,11 @@ export default function Landing() {
             GST billing, inventory, customers, employees — everything in one place. Built for Indian shopkeepers.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link to="/onboarding/1" style={{ textDecoration: "none", display: "inline-block", background: C.green, color: "#03110B", padding: "15px 28px", borderRadius: 12, fontWeight: 900, fontSize: 16 }}>
+            <Link to="/app" style={{ textDecoration: "none", display: "inline-block", background: C.green, color: "#03110B", padding: "15px 28px", borderRadius: 12, fontWeight: 900, fontSize: 16 }}>
               Start Free Trial &#8594;
             </Link>
-            <Link to="/app" style={{ textDecoration: "none", display: "inline-block", background: "transparent", color: C.text, padding: "15px 28px", borderRadius: 12, fontWeight: 700, fontSize: 16, border: `1px solid ${C.border}` }}>
-              Login to Dashboard
+            <Link to="/onboarding/2" style={{ textDecoration: "none", display: "inline-block", background: "transparent", color: C.text, padding: "15px 28px", borderRadius: 12, fontWeight: 700, fontSize: 16, border: `1px solid ${C.border}` }}>
+              Watch Demo
             </Link>
           </div>
         </section>

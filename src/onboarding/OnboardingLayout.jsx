@@ -4,7 +4,7 @@ const C = { bg: "#04060E", card: "#090E1C", border: "#131B32", text: "#C8D4FF", 
 
 export default function OnboardingLayout({ step, title, subtitle, children }) {
   const steps = [
-    { n: 1, label: "Account & OTP" },
+    { n: 1, label: "Account" },
     { n: 2, label: "Demo video" },
     { n: 3, label: "Start & pay" },
   ];
