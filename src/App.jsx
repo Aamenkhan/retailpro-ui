@@ -139,7 +139,7 @@ const btn=(color=C.green,ex={})=>({background:`linear-gradient(135deg,${color}CC
 // ══════════════════════════════════════════════════════════════════
 function Onboarding({onComplete}){
   const [step,setStep]=useState(0);
-  const [biz,setBiz]=useState({name:"",ownerName:"",phone:"",email:"",gstin:"",address:"",city:"Bhopal",state:"Madhya Pradesh",pincode:"",type:"Retail Shop",logo:"🏪",financialYear:"April"});
+  const [biz,setBiz]=useState({name:"",ownerName:"",phone:"",email:"",gstin:"",address:"",city:"",state:"",pincode:"",type:"Retail Shop",logo:"🏪",financialYear:"April"});
   const [owner,setOwner]=useState({username:"admin",password:"",confirmPassword:""});
   const LOGOS=["🏪","🛒","🏬","🏭","💊","👕","⚙️","🍕","🎂","📱","🔧","🌾","🧴","📦"];
   const s=(k,v)=>setBiz(p=>({...p,[k]:v}));
@@ -721,7 +721,7 @@ function POSPage({products,setProducts,orders,setOrders,notify,mode,setMode}){
       <div class="tr"><span>SGST</span><span>₹${(order.gst_amount/2).toFixed(2)}</span></div>
       <div class="gt"><span>GRAND TOTAL</span><span>₹${order.total.toLocaleString("en-IN")}</span></div>
     </div>
-    <div class="footer"><p>${business.name||"RetailPRO"} · ${business.city||"Bhopal"} · GSTIN: ${business.gstin||"N/A"}</p><p>Computer generated invoice</p></div>
+    <div class="footer"><p>${business.name||"RetailPRO"} · ${business.city||""} · GSTIN: ${business.gstin||"N/A"}</p><p>Computer generated invoice</p></div>
     <script>window.onload=()=>{window.print();}<\/script></body></html>`);
     w.document.close();
   };
@@ -732,7 +732,7 @@ function POSPage({products,setProducts,orders,setOrders,notify,mode,setMode}){
         <Modal onClose={()=>setReceipt(null)} width={380}>
           <div style={{padding:22,fontFamily:"monospace",textAlign:"center"}}>
             <div style={{fontSize:18,fontWeight:900,marginBottom:3}}>{business.logo||"🏪"} {business.name||"RetailPRO"}</div>
-            <div style={{fontSize:10,color:C.muted,marginBottom:10}}>{business.city||"Bhopal"} · GSTIN: {business.gstin||"N/A"}</div>
+            <div style={{fontSize:10,color:C.muted,marginBottom:10}}>{business.city ? `${business.city} · ` : ""}GSTIN: {business.gstin||"N/A"}</div>
             <div style={{display:"inline-block",padding:"2px 12px",borderRadius:20,background:mode==="wholesale"?"rgba(59,130,246,.15)":"rgba(0,229,160,.12)",color:mode==="wholesale"?C.blue:C.green,fontSize:11,fontWeight:700,marginBottom:12}}>{mode==="wholesale"?"🏭 WHOLESALE":"🛒 RETAIL"}</div>
             <div style={{borderTop:`1px dashed ${C.border2}`,paddingTop:10,marginBottom:8,fontSize:11,color:C.muted,display:"flex",justifyContent:"space-between"}}><span>{receipt.id}</span><span>{receipt.time}</span></div>
             <div style={{fontSize:12,textAlign:"left",marginBottom:10}}><div>Customer: <b>{receipt.customer}</b></div>{receipt.phone&&<div>Phone: {receipt.phone}</div>}</div>

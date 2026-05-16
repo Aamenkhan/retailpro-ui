@@ -20,9 +20,9 @@ const featureCards = [
 ];
 
 const testimonials = [
-  { name: "Ramesh Gupta", city: "Bhopal", text: "Billing and stock management became so much faster. Saves hours every day." },
-  { name: "Pooja Jain", city: "Indore", text: "GST bills and customer history in one click. Extremely easy to use." },
-  { name: "Imran Khan", city: "Nagpur", text: "My entire shop is now digital. No more manual work at all." },
+  { name: "Ramesh Gupta", city: "Delhi NCR", text: "Billing and stock management became so much faster. Saves hours every day." },
+  { name: "Pooja Jain", city: "Mumbai", text: "GST bills and customer history in one click. Extremely easy to use." },
+  { name: "Imran Khan", city: "Bengaluru", text: "My entire shop is now digital. No more manual work at all." },
 ];
 
 const WA = process.env.REACT_APP_SUPPORT_WHATSAPP?.replace(/\D/g, "") || "";
@@ -140,7 +140,7 @@ export default function Landing() {
       </main>
 
       <footer style={{ borderTop: `1px solid ${C.border}`, padding: "20px 32px", textAlign: "center", color: C.muted, fontSize: 13 }}>
-        Made with &#10084; in India &nbsp;|&nbsp; Bhopal &nbsp;|&nbsp; &copy; 2025 Thtwaat POS
+        Made with &#10084; in India &nbsp;|&nbsp; Pan India &nbsp;|&nbsp; &copy; 2026 Thtwaat POS
       </footer>
 
       {WA ? (
