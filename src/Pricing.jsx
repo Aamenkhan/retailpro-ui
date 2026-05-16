@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getToken } from "./api";
+import { billingAPI, getToken } from "./api";
 import { startSubscriptionCheckout } from "./billingCheckout";
 
 const C = {
@@ -68,6 +68,22 @@ const btnStyle = (primary, disabled) => ({
 export default function Pricing() {
   const [loading, setLoading] = useState(null);
   const [error, setError] = useState("");
+  const [paymentMode, setPaymentMode] = useState("");
+
+  useEffect(() => {
+    billingAPI
+      .config()
+      .then((c) => {
+        if (!c.razorpayConfigured) {
+          setPaymentMode("Payment setup pending");
+        } else if (c.liveMode) {
+          setPaymentMode("Secure payment · Razorpay Live");
+        } else {
+          setPaymentMode("Razorpay Test Mode — switch live keys on server");
+        }
+      })
+      .catch(() => setPaymentMode(""));
+  }, []);
 
   const openRazorpay = async (tier) => {
     setError("");
@@ -117,7 +133,8 @@ export default function Pricing() {
         </p>
         <h1 style={{ textAlign: "center", marginBottom: 8 }}>Pro mein Upgrade Karo</h1>
         <p style={{ textAlign: "center", color: C.muted, marginBottom: 18 }}>
-          Login required for paid plans · Razorpay test mode
+          Login required for paid plans
+          {paymentMode ? ` · ${paymentMode}` : ""}
         </p>
         {error && (
           <p style={{ textAlign: "center", color: "#ff6b6b", marginBottom: 12 }}>{error}</p>
