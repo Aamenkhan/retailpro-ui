@@ -1729,6 +1729,7 @@ export default function RetailPROApp(){
         <TrialBanner
           trialDaysLeft={subAccess?.trialDaysLeft}
           plan={subAccess?.plan}
+          status={subAccess?.status}
           currentPeriodEnd={subAccess?.currentPeriodEnd}
         />
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
