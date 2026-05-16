@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Login from "./Login";
 import { getToken, clearAuth } from "./api";
+import { resumeCheckoutAfterLogin, startSubscriptionCheckout } from "./billingCheckout";
 /* ══════════════════════════════════════════════════════════════════
    RetailPRO SaaS — ULTIMATE COMPLETE EDITION
    ✅ Onboarding (Business + Owner setup)
@@ -1622,7 +1623,24 @@ function InventoryPage({products,setProducts,notify}){
 export default function RetailPROApp(){
   const [isLoggedIn, setIsLoggedIn] = useState(!!getToken());
   if (!isLoggedIn) {
-    return <Login onLogin={() => setIsLoggedIn(true)} />;
+    return (
+      <Login
+        onLogin={async () => {
+          setIsLoggedIn(true);
+          const tier = resumeCheckoutAfterLogin();
+          if (tier) {
+            try {
+              await startSubscriptionCheckout(tier);
+              alert("Payment submitted. Your plan will activate shortly.");
+            } catch (e) {
+              if (e.message !== "Payment cancelled") {
+                console.warn("Checkout after login:", e.message);
+              }
+            }
+          }
+        }}
+      />
+    );
   }
   const [isSetup,setIsSetup]=useState(()=>!!DB.get("business",null));
   const [activeTab,setActiveTab]=useState("pos");

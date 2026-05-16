@@ -43,6 +43,13 @@ export const authAPI = {
   login: (body) => req("POST", "/auth/login", body),
 };
 
+export const billingAPI = {
+  config: () => req("GET", "/billing/config"),
+  status: () => req("GET", "/billing/status"),
+  createSubscription: (plan) =>
+    req("POST", "/billing/create-subscription", { plan }),
+};
+
 // ── PRODUCTS ──────────────────────────────────────────
 export const productsAPI = {
   getAll: () => req("GET", "/products"),
