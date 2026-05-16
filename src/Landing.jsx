@@ -25,6 +25,8 @@ const testimonials = [
   { name: "Imran Khan", city: "Nagpur", text: "My entire shop is now digital. No more manual work at all." },
 ];
 
+const WA = process.env.REACT_APP_SUPPORT_WHATSAPP?.replace(/\D/g, "") || "";
+
 export default function Landing() {
   return (
     <div style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -37,7 +39,7 @@ export default function Landing() {
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <Link to="/app" style={{ textDecoration: "none", color: C.muted, fontWeight: 600, fontSize: 14 }}>Login</Link>
-          <Link to="/signup" style={{ textDecoration: "none", background: C.green, color: "#03110B", padding: "10px 18px", borderRadius: 10, fontWeight: 800, fontSize: 14 }}>Free Demo</Link>
+          <Link to="/app?register=1" style={{ textDecoration: "none", background: C.green, color: "#03110B", padding: "10px 18px", borderRadius: 10, fontWeight: 800, fontSize: 14 }}>Free Trial</Link>
         </div>
       </nav>
 
@@ -54,8 +56,8 @@ export default function Landing() {
             GST billing, inventory, customers, employees — everything in one place. Built for Indian shopkeepers.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link to="/app" style={{ textDecoration: "none", display: "inline-block", background: C.green, color: "#03110B", padding: "15px 28px", borderRadius: 12, fontWeight: 900, fontSize: 16 }}>
-              Start Free Trial &#8594;
+            <Link to="/app?register=1" style={{ textDecoration: "none", display: "inline-block", background: C.green, color: "#03110B", padding: "15px 28px", borderRadius: 12, fontWeight: 900, fontSize: 16 }}>
+              Start Free Trial — 2 min setup &#8594;
             </Link>
             <Link to="/onboarding/2" style={{ textDecoration: "none", display: "inline-block", background: "transparent", color: C.text, padding: "15px 28px", borderRadius: 12, fontWeight: 700, fontSize: 16, border: `1px solid ${C.border}` }}>
               Watch Demo
@@ -91,7 +93,7 @@ export default function Landing() {
               <div style={{ fontSize: 32, fontWeight: 900, marginBottom: 4 }}>&#8377;0</div>
               <div style={{ color: C.green, fontWeight: 700, marginBottom: 14 }}>7 day free trial</div>
               <div style={{ color: C.muted, fontSize: 13, marginBottom: 14 }}>Full access · No credit card</div>
-              <Link to="/signup" style={{ display: "block", textAlign: "center", textDecoration: "none", background: "#1A243F", color: C.text, borderRadius: 10, padding: "11px 12px", fontWeight: 900, fontSize: 13 }}>Start Free Trial</Link>
+              <Link to="/app?register=1" style={{ display: "block", textAlign: "center", textDecoration: "none", background: "#1A243F", color: C.text, borderRadius: 10, padding: "11px 12px", fontWeight: 900, fontSize: 13 }}>Start Free Trial</Link>
             </div>
             <div style={{ background: C.card, border: `2px solid ${C.green}`, borderRadius: 14, padding: 24, position: "relative" }}>
               <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", background: C.green, color: "#03110B", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 20 }}>POPULAR</div>
@@ -131,8 +133,8 @@ export default function Landing() {
         <section style={{ textAlign: "center", background: C.card, border: `1px solid ${C.border}`, borderRadius: 20, padding: "40px 24px" }}>
           <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 12 }}>Ready to Digitize Your Shop?</h2>
           <p style={{ color: C.muted, marginBottom: 24 }}>Join 500+ retailers already saving time with Thtwaat POS</p>
-          <Link to="/signup" style={{ textDecoration: "none", display: "inline-block", background: C.green, color: "#03110B", padding: "15px 32px", borderRadius: 12, fontWeight: 900, fontSize: 16 }}>
-            Get Started Free &#8594;
+          <Link to="/app?register=1" style={{ textDecoration: "none", display: "inline-block", background: C.green, color: "#03110B", padding: "15px 32px", borderRadius: 12, fontWeight: 900, fontSize: 16 }}>
+            Get Started Free — Register Shop &#8594;
           </Link>
         </section>
       </main>
@@ -140,6 +142,30 @@ export default function Landing() {
       <footer style={{ borderTop: `1px solid ${C.border}`, padding: "20px 32px", textAlign: "center", color: C.muted, fontSize: 13 }}>
         Made with &#10084; in India &nbsp;|&nbsp; Bhopal &nbsp;|&nbsp; &copy; 2025 Thtwaat POS
       </footer>
+
+      {WA ? (
+        <a
+          href={`https://wa.me/${WA}?text=${encodeURIComponent("Hi, Thtwaat POS 7-day free trial ke baare mein jaanna hai.")}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            position: "fixed",
+            right: 20,
+            bottom: 20,
+            background: "#25D366",
+            color: "#fff",
+            padding: "12px 18px",
+            borderRadius: 50,
+            fontWeight: 800,
+            fontSize: 14,
+            textDecoration: "none",
+            boxShadow: "0 8px 24px rgba(0,0,0,.4)",
+            zIndex: 999,
+          }}
+        >
+          WhatsApp Help
+        </a>
+      ) : null}
     </div>
   );
 }

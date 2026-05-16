@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { authAPI, setToken, setShopId } from "./api";
 
 const C = {
@@ -10,9 +11,17 @@ const inp = (ex={}) => ({width:"100%",background:C.dim,border:`1px solid ${C.bor
 const lbl = {fontSize:10,color:C.muted,marginBottom:5,display:"block",fontWeight:700,textTransform:"uppercase",letterSpacing:.5};
 
 export default function Login({ onLogin }) {
-  const [tab, setTab] = useState("login");
+  const [searchParams] = useSearchParams();
+  const wantRegister =
+    searchParams.get("register") === "1" ||
+    searchParams.get("tab") === "register";
+  const [tab, setTab] = useState(wantRegister ? "register" : "login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (wantRegister) setTab("register");
+  }, [wantRegister]);
 
   const [loginForm, setLoginForm] = useState({ email:"", password:"" });
   const [regForm, setRegForm] = useState({ shopName:"", ownerName:"", email:"", phone:"", password:"", confirmPassword:"" });
@@ -39,17 +48,23 @@ export default function Login({ onLogin }) {
     if (regForm.password.length < 6) { setError("Password min 6 characters"); return; }
     setLoading(true); setError("");
     try {
-      const data = await authAPI.register({
+      await authAPI.register({
         shopName: regForm.shopName,
         ownerName: regForm.ownerName,
         email: regForm.email,
         phone: regForm.phone,
         password: regForm.password,
       });
+      const login = await authAPI.login({
+        email: regForm.email,
+        password: regForm.password,
+      });
+      setToken(login.accessToken);
+      setShopId(login.user.shopId);
+      localStorage.setItem("rp_user", JSON.stringify(login.user));
+      localStorage.setItem("rp_business", JSON.stringify(login.shop));
       setError("");
-      alert(`Shop registered! 7 day free trial. Ab login karo.`);
-      setTab("login");
-      setLoginForm({ email: regForm.email, password: "" });
+      onLogin(login);
     } catch (e) {
       setError(e.message || "Registration failed");
     }
@@ -69,6 +84,7 @@ export default function Login({ onLogin }) {
             <span style={{color:C.blue}}> POS</span>
           </div>
           <div style={{fontSize:12,color:C.muted,marginTop:4}}>Complete Business Suite</div>
+          <Link to="/" style={{ fontSize: 11, color: C.muted, marginTop: 8, display: "inline-block", textDecoration: "none" }}>← retailproai.in</Link>
         </div>
 
         {/* Tabs */}
