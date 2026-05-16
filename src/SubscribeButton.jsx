@@ -19,7 +19,7 @@ export default function SubscribeButton({ tier, label, primary = true }) {
     try {
       await startSubscriptionCheckout(tier);
       alert("Payment submitted. Your plan will activate shortly.");
-      window.location.href = "/app";
+      window.location.reload();
     } catch (e) {
       if (e.message !== "Payment cancelled") {
         setError(e.message || "Checkout failed");

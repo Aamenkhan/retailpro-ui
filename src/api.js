@@ -33,6 +33,13 @@ async function req(method, path, body = null) {
     throw new Error(data.message || "Invalid email or password");
   }
 
+  if (res.status === 403 && data.code === "payment_required") {
+    const err = new Error(data.message || "Payment required");
+    err.code = "payment_required";
+    err.details = data;
+    throw err;
+  }
+
   if (!res.ok) throw new Error(data.message || "API Error");
   return data;
 }

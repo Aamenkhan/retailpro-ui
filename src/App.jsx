@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import Login from "./Login";
-import { getToken, clearAuth } from "./api";
+import PaymentPlease from "./PaymentPlease";
+import TrialBanner from "./TrialBanner";
+import { billingAPI, getToken, clearAuth } from "./api";
 import { resumeCheckoutAfterLogin, startSubscriptionCheckout } from "./billingCheckout";
 /* ══════════════════════════════════════════════════════════════════
    RetailPRO SaaS — ULTIMATE COMPLETE EDITION
@@ -1622,6 +1624,34 @@ function InventoryPage({products,setProducts,notify}){
 // ══════════════════════════════════════════════════════════════════
 export default function RetailPROApp(){
   const [isLoggedIn, setIsLoggedIn] = useState(!!getToken());
+  const [subAccess, setSubAccess] = useState(null);
+  const [subLoading, setSubLoading] = useState(!!getToken());
+  const [isSetup, setIsSetup] = useState(() => !!DB.get("business", null));
+  const [activeTab, setActiveTab] = useState("pos");
+  const [mode, setMode] = useState("retail");
+  const [products, setProducts] = useState(() => DB.get("products", SEED_PRODUCTS));
+  const [orders, setOrders] = useState(() => DB.get("orders", []));
+  const { add: notify, Toast } = useToast();
+
+  useEffect(() => {
+    if (!getToken()) {
+      setSubAccess(null);
+      setSubLoading(false);
+      return;
+    }
+    setSubLoading(true);
+    billingAPI
+      .status()
+      .then((s) => setSubAccess(s))
+      .catch(() => setSubAccess({ paymentRequired: true, message: "Could not load subscription" }))
+      .finally(() => setSubLoading(false));
+  }, [isLoggedIn]);
+
+  const refreshSubscription = () => {
+    if (!getToken()) return;
+    billingAPI.status().then(setSubAccess).catch(() => {});
+  };
+
   if (!isLoggedIn) {
     return (
       <Login
@@ -1632,6 +1662,7 @@ export default function RetailPROApp(){
             try {
               await startSubscriptionCheckout(tier);
               alert("Payment submitted. Your plan will activate shortly.");
+              refreshSubscription();
             } catch (e) {
               if (e.message !== "Payment cancelled") {
                 console.warn("Checkout after login:", e.message);
@@ -1642,13 +1673,22 @@ export default function RetailPROApp(){
       />
     );
   }
-  const [isSetup,setIsSetup]=useState(()=>!!DB.get("business",null));
-  const [activeTab,setActiveTab]=useState("pos");
-  const [mode,setMode]=useState("retail");
-  const [products,setProducts]=useState(()=>DB.get("products",SEED_PRODUCTS));
-  const [orders,setOrders]=useState(()=>DB.get("orders",[]));
-  const {add:notify,Toast}=useToast();
-  const business=DB.get("business",{});
+
+  if (subLoading) {
+    return (
+      <div style={{ minHeight: "100vh", background: C.bg, color: C.muted, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Space Grotesk', sans-serif" }}>
+        Loading…
+      </div>
+    );
+  }
+
+  if (subAccess?.paymentRequired) {
+    return (
+      <PaymentPlease message={subAccess.message} status={subAccess.status} />
+    );
+  }
+
+  const business = DB.get("business", {});
 
   const todayOrders=orders.filter(o=>new Date(o.timestamp).toISOString().slice(0,10)===todayK());
   const todayRev=todayOrders.reduce((a,o)=>a+o.total,0);
@@ -1685,7 +1725,13 @@ export default function RetailPROApp(){
         input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-calendar-picker-indicator,input[type=month]::-webkit-calendar-picker-indicator{filter:invert(.5)opacity(.6);}
       `}</style>
       <Toast/>
-      <div style={{display:"flex",height:"100vh",fontFamily:"'Space Grotesk',sans-serif",background:C.bg,color:C.text}}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", fontFamily: "'Space Grotesk', sans-serif", background: C.bg, color: C.text }}>
+        <TrialBanner
+          trialDaysLeft={subAccess?.trialDaysLeft}
+          plan={subAccess?.plan}
+          currentPeriodEnd={subAccess?.currentPeriodEnd}
+        />
+        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         {/* SIDEBAR */}
         <div style={{width:196,background:"#060B18",borderRight:`1px solid ${C.border}`,display:"flex",flexDirection:"column",padding:"14px 9px"}}>
           <div style={{marginBottom:18,padding:"0 5px"}}>
@@ -1727,6 +1773,7 @@ export default function RetailPROApp(){
           {activeTab==="analytics"&&<AnalyticsPage orders={orders} products={products}/>}
           {activeTab==="orders"   &&<OrdersPage    orders={orders}/>}
           {activeTab==="inventory"&&<InventoryPage products={products} setProducts={setProducts} notify={notify}/>}
+        </div>
         </div>
       </div>
     </>
