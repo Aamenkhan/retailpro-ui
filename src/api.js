@@ -43,6 +43,11 @@ export const authAPI = {
   login: (body) => req("POST", "/auth/login", body),
 };
 
+export const otpAPI = {
+  send: (phone) => req("POST", "/otp/send", { phone }),
+  verify: (phone, otp) => req("POST", "/otp/verify", { phone, otp }),
+};
+
 export const billingAPI = {
   config: () => req("GET", "/billing/config"),
   status: () => req("GET", "/billing/status"),
