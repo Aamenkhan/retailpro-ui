@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
     <loc>https://retailproai.in/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
   </url>
+
+  <url>
+    <loc>https://retailproai.in/login</loc>
+  </url>
+
+  <url>
+    <loc>https://retailproai.in/signup</loc>
+  </url>
+
+  <url>
+    <loc>https://retailproai.in/pricing</loc>
+  </url>
+
+  <url>
+    <loc>https://retailproai.in/book-demo</loc>
+  </url>
+
+  <url>
+    <loc>https://retailproai.in/demo-access</loc>
+  </url>
+
 </urlset>
