@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
 
+    <!-- Basic SEO -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
 
@@ -22,31 +23,60 @@
     <meta name="author" content="Thtwaat POS" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Thtwaat POS" />
+    <meta
+      property="og:title"
+      content="Thtwaat POS - Retail POS Software for Indian Shops"
+    />
+
     <meta
       property="og:description"
       content="GST billing, inventory management, customer management and POS software for Indian retail stores."
     />
+
     <meta property="og:url" content="https://retailproai.in" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Thtwaat POS" />
 
+    <!-- Twitter -->
+    <meta
+      name="twitter:title"
+      content="Thtwaat POS - Retail POS Software for Indian Shops"
+    />
+
+    <meta
+      name="twitter:description"
+      content="GST billing, inventory management, customer management and POS software for Indian retail stores."
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://retailproai.in/" />
+
+    <!-- Icons -->
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
     <!-- Google Analytics GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3EX9GTQEBT"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-3EX9GTQEBT"
+    ></script>
+
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      function gtag() {
+        dataLayer.push(arguments);
+      }
 
-      gtag('config', 'G-3EX9GTQEBT');
+      gtag("js", new Date());
+      gtag("config", "G-3EX9GTQEBT");
     </script>
-
   </head>
 
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+
     <div id="root"></div>
   </body>
 </html>
